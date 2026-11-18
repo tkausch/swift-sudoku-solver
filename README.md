@@ -12,146 +12,82 @@
 [![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE)
 [![Last commit](https://img.shields.io/github/last-commit/tkausch/swift-sudoku-solver)](https://github.com/tkausch/swift-sudoku-solver/commits/main)
 
-A 9×9 Sudoku library and command-line tool in Swift. Puzzles are solved with
-depth-first search (backtracking) that always branches on the most constrained cell.
+A 9×9 Sudoku library and command-line tool in Swift: solve any puzzle with
+depth-first search, and generate new easy puzzles.
 
 ## Requirements
 
-- Swift 6.0 or later
-- macOS 13+ / iOS 16+ (the library has no other dependencies)
-
-The command-line tool uses [Swift Argument Parser](https://github.com/apple/swift-argument-parser).
+Swift 6.0+, macOS 13+ / iOS 16+. The library has no dependencies; the command-line
+tool uses [Swift Argument Parser](https://github.com/apple/swift-argument-parser).
 
 ## Command-line tool
 
 ```sh
 swift build -c release
-.build/release/sudoku            # solve a random built-in puzzle
-```
-
-```
-USAGE: sudoku [<puzzle>] [--list] [--sample <n>]
-
-ARGUMENTS:
-  <puzzle>                81 cells row by row: digits 1-9, 0 or . for empty.
-
-OPTIONS:
-  -l, --list              List the built-in puzzles and exit.
-  -s, --sample <n>        Solve built-in puzzle number <n> (see --list) instead
-                          of a random one.
-  -h, --help              Show help information.
-```
-
-Examples:
-
-```sh
-.build/release/sudoku --list
-.build/release/sudoku --sample 12
+.build/release/sudoku                    # solve a random built-in puzzle
+.build/release/sudoku --sample 12        # solve built-in puzzle 12 (see --list)
 .build/release/sudoku 53..7....6..195....98....6.8...6...34..8.3..17...2...6.6....28....419..5....8..79
+.build/release/sudoku --generate         # generate an easy puzzle and solve it
+.build/release/sudoku -g --clues 30      # ... with at least 30 clues (default 36)
 ```
 
-Output:
-
-```
-5 3 . | . 7 . | . . .
-6 . . | 1 9 5 | . . .
-. 9 8 | . . . | . 6 .
-------+-------+------
-...
-
-Board positions visited: 52
-
-Solved in 0.3 ms:
-
-5 3 4 | 6 7 8 | 9 1 2
-6 7 2 | 1 9 5 | 3 4 8
-1 9 8 | 3 4 2 | 5 6 7
-------+-------+------
-...
-```
-
-Invalid input exits with status 64 and a message; a puzzle without a solution exits with status 1.
+Puzzles are 81 cells row by row: digits 1-9, `0` or `.` for empty. The tool prints the
+grid, the board positions visited, the time and the solution. Run `sudoku --help` for
+all options. Invalid input exits with status 64, an unsolvable puzzle with status 1.
 
 ## Library
-
-Add the package as a dependency and import `SudokuSolver`:
 
 ```swift
 import SudokuSolver
 
-let cells = "53..7....6..195....98....6.8...6...34..8.3..17...2...6.6....28....419..5....8..79"
-    .map { $0 == "." ? 0 : $0.wholeNumberValue! }
-
-guard let puzzle = Sudoku(board: cells) else { fatalError("invalid puzzle") }
-
-let solver = DFSSolver<Sudoku>()
-if let solution = solver.solve(puzzle) {
-    print(solution)
-}
-
-// With statistics:
-let (solution, positions) = solver.solveCountingPositions(puzzle)
+let puzzle = Sudoku(board: cells)!                  // 81 values, 0 = empty
+let solution = DFSSolver().solve(puzzle)            // nil if unsolvable
+let isUnique = DFSSolver().countSolutions(puzzle) == 1
+let easy = SudokuGenerator().generateEasy()         // pass `using: &rng` to make it reproducible
 ```
-
-### Types
 
 | Type | Purpose |
 |---|---|
-| `Sudoku` | A 9×9 grid stored as 81 values in row-major order (`0` = empty). Creation fails for wrong cell counts, values outside `0...9`, or duplicate digits. Provides `subscript(row:col:)`, `isValidSudoku()`, `isComplete`, `candidates(atRow:col:)`. |
-| `SolvableSudoku` | Protocol with what a solver needs: `size`, a read/write subscript and `candidates(atRow:col:)`. `Sudoku` conforms. |
-| `SudokuSolver<Puzzle>` | Protocol for solving algorithms: `solve(_:) -> Puzzle?`. Usable as `some SudokuSolver<Sudoku>` or `any SudokuSolver<Sudoku>`. |
-| `DFSSolver<Puzzle>` | Depth-first search solver conforming to `SudokuSolver`. |
+| `Sudoku` | 9×9 grid; creation fails for invalid input. `subscript(row:col:)`, `candidates(atRow:col:)`, `isValidSudoku()`, `isComplete`. |
+| `SolvableSudoku` | What a solver needs from a grid. Adopt it to solve other sizes (e.g. 4×4). |
+| `SudokuSolver` | Protocol for solving algorithms: `solve(_:) -> Puzzle?`. |
+| `DFSSolver` | Backtracking solver; also `solveCountingPositions(_:)` and `countSolutions(_:limit:)`. |
+| `NakedSingleSolver` | Fills only cells with exactly one candidate, never guesses. Reports `solved`, `stuck` or `contradiction`. |
+| `SudokuGenerator` | `generateEasy(minimumClues:)`: puzzles solvable with naked singles alone. |
 
-### How `DFSSolver` works
+## How it works
 
-1. Find the empty cell with the fewest candidates (stop early at 0 or 1).
-2. If there is no empty cell, the puzzle is solved.
-3. Otherwise try each candidate digit in that cell and recurse.
-4. If no candidate leads to a solution, clear the cell and backtrack.
+**Solving:** `DFSSolver` picks the empty cell with the fewest candidates, tries each
+digit and recurses, and backtracks on dead ends. Choosing the most constrained cell
+finds dead ends early and fills forced cells without guessing.
 
-Choosing the most constrained cell finds dead ends early and makes cells with
-a single candidate get filled without guessing.
-
-A *board position* is one grid state examined by the search: the start plus
-every grid reached by placing a digit, including abandoned ones. A puzzle with
-`n` empty cells needs at least `n + 1` positions; anything above that is backtracking.
+**Generating:** `SudokuGenerator` fills a random complete grid, then empties cell pairs
+that mirror each other through the center, in random order. A pair stays empty only if
+`NakedSingleSolver` can still solve the puzzle. Because every digit is then forced, the
+puzzle has exactly one solution.
 
 ## Results
 
-All built-in puzzles have exactly one solution. Release build, median of 5 runs,
-Apple M3 Pro, macOS 26.7, Swift 6.4.
+Release build, median of 5 runs, Apple M3 Pro, Swift 6.4. A *board position* is one grid
+state examined by the search; a puzzle with `n` empty cells needs at least `n + 1`.
 
-| # | Puzzle | Clues | Board positions | Time (ms) |
+| # | Puzzle | Clues | Positions | Time (ms) |
 |--:|---|--:|--:|--:|
 | 1 | Wikipedia example (easy) | 30 | 52 | 0.3 |
 | 2 | Project Euler #96, grid 01 (easy) | 32 | 50 | 0.3 |
 | 3 | Project Euler #96, grid 02 (medium) | 30 | 62 | 0.4 |
 | 4 | Peter Norvig, grid 2 (hard) | 17 | 719 | 8.8 |
-| 5 | Arto Inkala, "world's hardest" (very hard) | 21 | 13,811 | 129.9 |
-| 6 | Easter Monster (very hard) | 21 | 6,274 | 40.9 |
-| 7 | Golden Nugget (very hard) | 21 | 14,713 | 103.2 |
-| 8 | AI Escargot, Arto Inkala 2006 (very hard) | 23 | 220 | 1.6 |
-| 9 | Peter Norvig, hardest.txt #1 (very hard) | 22 | 4,876 | 37.2 |
-| 10 | Peter Norvig, hardest.txt #2 (very hard) | 23 | 654 | 4.8 |
-| 11 | Peter Norvig, hardest.txt #4 (very hard) | 24 | 1,517 | 13.0 |
-| 12 | Wikipedia, designed against brute force (very hard) | 17 | 58,234 | 511.8 |
+| 5 | Arto Inkala, "world's hardest" | 21 | 13,811 | 129.9 |
+| 6 | Easter Monster | 21 | 6,274 | 40.9 |
+| 7 | Golden Nugget | 21 | 14,713 | 103.2 |
+| 8 | AI Escargot | 23 | 220 | 1.6 |
+| 9 | Peter Norvig, hardest.txt #1 | 22 | 4,876 | 37.2 |
+| 10 | Peter Norvig, hardest.txt #2 | 23 | 654 | 4.8 |
+| 11 | Peter Norvig, hardest.txt #4 | 24 | 1,517 | 13.0 |
+| 12 | Wikipedia, designed against brute force | 17 | 58,234 | 511.8 |
 
-Observations:
-
-- The easy puzzles never backtrack: puzzle 1 has 51 empty cells and needs exactly 52 positions.
-- Difficulty for humans and for the solver differ: AI Escargot is famously hard to
-  solve by hand but needs only 220 positions.
-- Puzzle 12 was built to defeat simple backtracking and is the slowest by far.
-- Each position costs roughly 7–9 µs, mostly spent allocating arrays and a `Set`
-  in `candidates(atRow:col:)`. Bitmask-based candidate tracking would make each
-  position much cheaper.
-
-Positions are deterministic; times vary between runs and machines. To reproduce:
-
-```sh
-swift build -c release
-for i in $(seq 1 12); do .build/release/sudoku -s $i | grep -E "positions|Solved"; done
-```
+Puzzles 5–12 are very hard for humans, but not always for the solver: AI Escargot needs
+only 220 positions. Each position costs about 7–9 µs, mostly for allocating candidates.
 
 ## Development
 
@@ -160,28 +96,6 @@ swift build
 swift test
 ```
 
-```
-assets/
-  banner.svg             README header image
-Sources/
-  SudokuSolver/          library
-    Sudoku.swift           grid type, validation, candidates
-    SolvableSudoku.swift   protocol used by solvers
-    SudokuSolver.swift     solver protocol
-    DFSSolver.swift        depth-first search solver
-  SudokuCLI/             command-line tool
-    SudokuCommand.swift    argument parsing and output
-    SamplePuzzles.swift    built-in puzzles
-Tests/
-  SudokuSolverTests/
-    SudokuTests.swift      grid tests
-    SolverTests.swift      solver tests
-```
-
 ## License
 
-Copyright © 2026 Thomas Kausch.
-
-Licensed under the [Apache License, Version 2.0](LICENSE). You may use, change and
-share this code for any purpose, including commercial use, as long as you keep the
-copyright and license notices.
+Copyright © 2026 Thomas Kausch. Licensed under the [Apache License, Version 2.0](LICENSE).

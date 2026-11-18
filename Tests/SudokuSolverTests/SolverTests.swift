@@ -18,7 +18,8 @@ struct SolverTests {
         let solved = try #require(DFSSolver().solve(puzzle))
         #expect(solved.isComplete)
         #expect(solved.isValidSudoku())
-        #expect(solved == (try sudoku("812753649943682175675491283154237896369845721287169534521974368438526917796318452")))
+        let expected = try sudoku("812753649943682175675491283154237896369845721287169534521974368438526917796318452")
+        #expect(solved == expected)
     }
 
     @Test func keepsGivens() throws {

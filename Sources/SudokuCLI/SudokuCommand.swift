@@ -5,9 +5,10 @@ import SudokuSolver
 struct SudokuCommand: ParsableCommand {
     static let configuration = CommandConfiguration(
         commandName: "sudoku",
-        abstract: "Solve a 9x9 Sudoku with depth-first search.",
+        abstract: "Solve or generate a 9x9 Sudoku.",
         discussion: """
             Without a puzzle, one of \(samplePuzzles.count) built-in puzzles is picked at random.
+            With --generate, a new easy puzzle is generated and solved instead.
             """
     )
 
@@ -24,9 +25,29 @@ struct SudokuCommand: ParsableCommand {
                                valueName: "n"))
     var sample: Int?
 
+    @Flag(name: .shortAndLong,
+          help: "Generate a new easy puzzle (solvable with naked singles) and solve it.")
+    var generate = false
+
+    @Option(help: ArgumentHelp("With --generate: the minimum number of clues (\(minimumClueRange.lowerBound)-\(minimumClueRange.upperBound), default \(defaultMinimumClues)).",
+                               valueName: "n"))
+    var clues: Int?
+
+    static let minimumClueRange = 17...Sudoku.cellCount
+    static let defaultMinimumClues = 36
+
     mutating func validate() throws {
         if cells != nil && sample != nil {
             throw ValidationError("Pass either a puzzle or --sample, not both.")
+        }
+        if generate && (cells != nil || sample != nil) {
+            throw ValidationError("--generate can't be combined with a puzzle or --sample.")
+        }
+        if clues != nil && !generate {
+            throw ValidationError("--clues only works together with --generate.")
+        }
+        if let clues, !Self.minimumClueRange.contains(clues) {
+            throw ValidationError("--clues must be between \(Self.minimumClueRange.lowerBound) and \(Self.minimumClueRange.upperBound).")
         }
         if let sample, !samplePuzzles.indices.contains(sample - 1) {
             throw ValidationError("--sample must be between 1 and \(samplePuzzles.count).")
@@ -48,7 +69,12 @@ struct SudokuCommand: ParsableCommand {
         }
 
         let puzzle: Sudoku
-        if let cells {
+        if generate {
+            puzzle = SudokuGenerator().generateEasy(minimumClues: clues ?? Self.defaultMinimumClues)
+            let clueCount = puzzle.board.filter { $0 != 0 }.count
+            print("Generated easy puzzle with \(clueCount) clues:")
+            print(puzzle.board.map { $0 == 0 ? "." : String($0) }.joined() + "\n")
+        } else if let cells {
             puzzle = try Self.parsePuzzle(cells)
         } else {
             let sample = sample.map { samplePuzzles[$0 - 1] } ?? samplePuzzles.randomElement()!

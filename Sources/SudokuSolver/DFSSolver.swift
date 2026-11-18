@@ -52,6 +52,26 @@ public struct DFSSolver<Puzzle: SolvableSudoku>: SudokuSolver, Sendable {
         return (solved ? sudoku : nil, positions)
     }
 
+    /// Counts the solutions of a puzzle, stopping once `limit` is reached.
+    ///
+    /// Use the default limit of 2 to check that a puzzle has exactly one solution:
+    ///
+    /// ```swift
+    /// let isUnique = DFSSolver().countSolutions(puzzle) == 1
+    /// ```
+    ///
+    /// - Parameters:
+    ///   - sudoku: The puzzle to examine. It is not modified.
+    ///   - limit: The search stops after finding this many solutions. Must be at least 1.
+    /// - Returns: The number of solutions, at most `limit`: `0` if there is none.
+    public func countSolutions(_ sudoku: Puzzle, limit: Int = 2) -> Int {
+        precondition(limit >= 1, "limit must be at least 1")
+        var sudoku = sudoku
+        var count = 0
+        countSolutions(&sudoku, limit: limit, count: &count)
+        return count
+    }
+
     /// Depth-first search: fills one empty cell with each of its candidates in turn
     /// and recurses; undoes the move when a branch leads to a dead end.
     ///
@@ -73,6 +93,21 @@ public struct DFSSolver<Puzzle: SolvableSudoku>: SudokuSolver, Sendable {
         }
         sudoku[row, col] = 0   // backtrack
         return false
+    }
+
+    /// Depth-first search like ``search(_:positions:)``, but instead of stopping at the first
+    /// solution it counts solutions until `count` reaches `limit`.
+    private func countSolutions(_ sudoku: inout Puzzle, limit: Int, count: inout Int) {
+        guard let (row, col, candidates) = mostConstrainedCell(in: sudoku) else {
+            count += 1   // no empty cell left: one more solution
+            return
+        }
+        for digit in candidates {
+            sudoku[row, col] = digit
+            countSolutions(&sudoku, limit: limit, count: &count)
+            if count >= limit { break }
+        }
+        sudoku[row, col] = 0   // backtrack
     }
 
     /// Returns the empty cell with the fewest candidates, or `nil` if every cell is filled.

@@ -95,6 +95,54 @@ struct SolverTests {
         #expect(result.positions == 1)   // cell (0, 8) has no candidates: dead end at the start
     }
 
+    // MARK: - Counting solutions
+
+    @Test func uniquePuzzlesHaveOneSolution() throws {
+        let easy = try sudoku("530070000600195000098000060800060003400803001700020006060000280000419005000080079")
+        let hard = try sudoku("800000000003600000070090200050007000000045700000100030001000068008500010090000400")
+        #expect(DFSSolver().countSolutions(easy) == 1)
+        #expect(DFSSolver().countSolutions(hard) == 1)
+    }
+
+    @Test func solvedGridHasOneSolution() throws {
+        let solution = try sudoku("534678912672195348198342567859761423426853791713924856961537284287419635345286179")
+        #expect(DFSSolver().countSolutions(solution) == 1)
+    }
+
+    @Test func emptyGridStopsAtLimit() throws {
+        let empty = try sudoku(String(repeating: "0", count: 81))
+        #expect(DFSSolver().countSolutions(empty) == 2)
+        #expect(DFSSolver().countSolutions(empty, limit: 5) == 5)
+        #expect(DFSSolver().countSolutions(empty, limit: 1) == 1)
+    }
+
+    /// Blanks cells (0, 3), (0, 4), (3, 3), (3, 4) of a solved grid. They hold
+    /// 6 7 / 7 6, so swapping the pairs gives a second valid grid.
+    @Test func deadlyRectangleHasTwoSolutions() throws {
+        var cells = try sudoku("534678912672195348198342567859761423426853791713924856961537284287419635345286179").board
+        for i in [3, 4, 30, 31] { cells[i] = 0 }
+        let puzzle = try #require(Sudoku(board: cells))
+        #expect(DFSSolver().countSolutions(puzzle) == 2)
+        #expect(DFSSolver().countSolutions(puzzle, limit: 10) == 2)
+    }
+
+    @Test func unsolvablePuzzleHasNoSolution() throws {
+        let puzzle = try sudoku("123456780" + "000000009" + String(repeating: "0", count: 63))
+        #expect(DFSSolver().countSolutions(puzzle) == 0)
+    }
+
+    @Test func countingSolutionsKeepsInput() throws {
+        let puzzle = try sudoku("530070000600195000098000060800060003400803001700020006060000280000419005000080079")
+        let copy = puzzle
+        _ = DFSSolver().countSolutions(puzzle)
+        #expect(puzzle == copy)
+    }
+
+    @Test func countsSolutionsOfAnyGridConformingToProtocol() {
+        let empty = MiniSudoku(cells: Array(repeating: 0, count: 16))
+        #expect(DFSSolver().countSolutions(empty, limit: 1000) == 288)   // all 4×4 Sudoku grids
+    }
+
     // MARK: - SudokuSolver protocol
 
     /// Code written against the protocol works with any solver for `Sudoku`.

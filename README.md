@@ -9,6 +9,7 @@
 [![Platforms](https://img.shields.io/badge/platforms-macOS%2013%2B%20%7C%20iOS%2016%2B-lightgrey)](#requirements)
 [![Swift Package Manager](https://img.shields.io/badge/SwiftPM-compatible-brightgreen)](https://swift.org/package-manager/)
 [![Latest tag](https://img.shields.io/github/v/tag/tkausch/swift-sudoku-solver?sort=semver)](https://github.com/tkausch/swift-sudoku-solver/tags)
+[![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE)
 [![Last commit](https://img.shields.io/github/last-commit/tkausch/swift-sudoku-solver)](https://github.com/tkausch/swift-sudoku-solver/commits/main)
 
 A 9×9 Sudoku library and command-line tool in Swift. Puzzles are solved with
@@ -176,3 +177,11 @@ Tests/
     SudokuTests.swift      grid tests
     SolverTests.swift      solver tests
 ```
+
+## License
+
+Copyright © 2026 Thomas Kausch.
+
+Licensed under the [Apache License, Version 2.0](LICENSE). You may use, change and
+share this code for any purpose, including commercial use, as long as you keep the
+copyright and license notices.

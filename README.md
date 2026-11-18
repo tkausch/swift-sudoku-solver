@@ -4,6 +4,12 @@
 
 # Swift Sudoku Solver
 
+[![Swift 6.0+](https://img.shields.io/badge/Swift-6.0%2B-F05138?logo=swift&logoColor=white)](https://swift.org)
+[![Platforms](https://img.shields.io/badge/platforms-macOS%2013%2B%20%7C%20iOS%2016%2B-lightgrey)](#requirements)
+[![Swift Package Manager](https://img.shields.io/badge/SwiftPM-compatible-brightgreen)](https://swift.org/package-manager/)
+[![Latest tag](https://img.shields.io/github/v/tag/tkausch/swift-sudoku-solver?sort=semver)](https://github.com/tkausch/swift-sudoku-solver/tags)
+[![Last commit](https://img.shields.io/github/last-commit/tkausch/swift-sudoku-solver)](https://github.com/tkausch/swift-sudoku-solver/commits/main)
+
 A 9×9 Sudoku library and command-line tool in Swift. Puzzles are solved with
 depth-first search (backtracking) that always branches on the most constrained cell.
 

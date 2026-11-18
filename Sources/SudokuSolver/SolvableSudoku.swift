@@ -28,6 +28,3 @@ public protocol SolvableSudoku {
     ///   digit fits.
     func candidates(atRow row: Int, col: Int) -> [Int]
 }
-
-/// `Sudoku` already provides `size`, the subscript and `candidates(atRow:col:)`.
-extension Sudoku: SolvableSudoku {}

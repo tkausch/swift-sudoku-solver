@@ -140,25 +140,6 @@ public struct Sudoku: Equatable, Sendable, CustomStringConvertible {
         return Self.isValidUnit(boxUnit(atRow: r, col: c))
     }
 
-    /// Returns the digits that can be placed in a cell without repeating a digit
-    /// in its row, column or box.
-    ///
-    /// - Parameters:
-    ///   - row: The cell's row, `0..<size`.
-    ///   - col: The cell's column, `0..<size`.
-    /// - Returns: The possible digits in ascending order. Empty if the cell is
-    ///   already filled, or if no digit fits (a dead end).
-    public func candidates(atRow row: Int, col: Int) -> [Int] {
-        guard self[row, col] == 0 else { return [] }
-
-        let rowNums = rowUnit(atRow: row)
-        let colNums = colUnit(atCol: col)
-        let boxNums = boxUnit(atRow: row, col: col)
-        let used = Set(rowNums + colNums + boxNums)
-
-        return (1...Self.size).filter { !used.contains($0) }
-    }
-    
     private func boxUnit(atRow r: Int, col c: Int) -> [Int] {
         let boxSize = Self.boxSize
         let startRow = (r / boxSize) * boxSize
@@ -197,5 +178,31 @@ public struct Sudoku: Equatable, Sendable, CustomStringConvertible {
     private static func isValidUnit<Unit: Collection<Int>>(_ unit: Unit) -> Bool {
         let digits = unit.filter { $0 != 0 }
         return Set(digits).count == digits.count
+    }
+}
+
+// MARK: - SolvableSudoku
+
+/// `size` and the subscript come from the main declaration; this extension adds
+/// `candidates(atRow:col:)`.
+extension Sudoku: SolvableSudoku {
+
+    /// Returns the digits that can be placed in a cell without repeating a digit
+    /// in its row, column or box.
+    ///
+    /// - Parameters:
+    ///   - row: The cell's row, `0..<size`.
+    ///   - col: The cell's column, `0..<size`.
+    /// - Returns: The possible digits in ascending order. Empty if the cell is
+    ///   already filled, or if no digit fits (a dead end).
+    public func candidates(atRow row: Int, col: Int) -> [Int] {
+        guard self[row, col] == 0 else { return [] }
+
+        let rowNums = rowUnit(atRow: row)
+        let colNums = colUnit(atCol: col)
+        let boxNums = boxUnit(atRow: row, col: col)
+        let used = Set(rowNums + colNums + boxNums)
+
+        return (1...Self.size).filter { !used.contains($0) }
     }
 }

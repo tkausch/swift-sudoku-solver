@@ -2,8 +2,6 @@
   <img src="assets/banner.svg" alt="Swift Sudoku Solver: a 9×9 grid mid-solve next to a depth-first search tree" width="100%">
 </p>
 
-# Swift Sudoku Solver
-
 [![Tests](https://github.com/tkausch/swift-sudoku-solver/actions/workflows/tests.yml/badge.svg)](https://github.com/tkausch/swift-sudoku-solver/actions/workflows/tests.yml)
 [![Swift 6.0+](https://img.shields.io/badge/Swift-6.0%2B-F05138?logo=swift&logoColor=white)](https://swift.org)
 [![Platforms](https://img.shields.io/badge/platforms-macOS%2013%2B%20%7C%20iOS%2016%2B-lightgrey)](#requirements)

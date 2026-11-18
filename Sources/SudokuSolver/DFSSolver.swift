@@ -71,7 +71,7 @@ public struct DFSSolver<Puzzle: SolvableSudoku>: SudokuSolver, Sendable {
         countSolutions(&sudoku, limit: limit, count: &count)
         return count
     }
-
+    
     /// Depth-first search: fills one empty cell with each of its candidates in turn
     /// and recurses; undoes the move when a branch leads to a dead end.
     ///

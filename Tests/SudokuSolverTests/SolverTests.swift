@@ -165,7 +165,7 @@ struct SolverTests {
 }
 
 /// A minimal 4x4 grid (2x2 boxes) showing that `DFSSolver` only depends on `SolvableSudoku`.
-private struct MiniSudoku: SolvableSudoku {
+struct MiniSudoku: SolvableSudoku {
     static let size = 4
     var cells: [Int]
 

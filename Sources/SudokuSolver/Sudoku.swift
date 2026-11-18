@@ -70,9 +70,11 @@ public struct Sudoku: Equatable, Sendable, CustomStringConvertible {
 
     /// Reads or writes the cell at a given row and column.
     ///
-    /// Writing `0` empties the cell. Writing does not check the value or look for
-    /// duplicate digits: call ``isValidSudoku()`` afterwards if needed, and only
-    /// write values from ``allowedValues``.
+    /// Writing `0` empties the cell. Writing does not look for duplicate digits:
+    /// call ``isValidSudoku()`` afterwards if needed.
+    ///
+    /// - Precondition: `row` and `col` are in `0..<size`; a written value is in
+    ///   ``allowedValues``. Violating either stops the program.
     ///
     /// - Parameters:
     ///   - row: The row, `0..<size`.
@@ -80,10 +82,11 @@ public struct Sudoku: Equatable, Sendable, CustomStringConvertible {
     /// - Returns: The cell's value: `0` if empty, otherwise a digit `1...size`.
     public subscript(row: Int, col: Int) -> Int {
         get {
-            return board[Self.index(row, col)]
+            return board[Self.checkedIndex(row, col)]
         }
         set {
-            board[Self.index(row, col)] = newValue
+            precondition(Self.isAllowedValue(newValue), "Value \(newValue) is outside \(Self.allowedValues)")
+            board[Self.checkedIndex(row, col)] = newValue
         }
     }
 
@@ -179,6 +182,14 @@ public struct Sudoku: Equatable, Sendable, CustomStringConvertible {
     @inline(__always)
     private static func index(_ row: Int, _ col: Int) -> Int {
         row * size + col
+    }
+
+    /// Like ``index(_:_:)``, but stops the program if `row` or `col` is outside `0..<size`.
+    @inline(__always)
+    private static func checkedIndex(_ row: Int, _ col: Int) -> Int {
+        precondition((0..<size).contains(row) && (0..<size).contains(col),
+                     "Cell (\(row), \(col)) is outside the \(size)×\(size) grid")
+        return index(row, col)
     }
     
 

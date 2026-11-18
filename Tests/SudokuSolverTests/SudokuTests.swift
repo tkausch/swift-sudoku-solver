@@ -37,6 +37,7 @@ struct SudokuTests {
         #expect(Sudoku(board: cells) != nil)
     }
 
+    #if compiler(>=6.2)   // exit tests (#expect(processExitsWith:)) need Swift 6.2
     @Test(arguments: [-1, 10])
     func subscriptRejectsOutOfRangeValues(value: Int) async {
         await #expect(processExitsWith: .failure) { [value] in
@@ -44,6 +45,7 @@ struct SudokuTests {
             sudoku[0, 0] = value
         }
     }
+    #endif
 
     @Test func partialPuzzleIsValid() throws {
         let sudoku = try #require(Sudoku(board: board(puzzle)))
@@ -127,6 +129,7 @@ struct SudokuTests {
         #expect(sudoku.board[80] == 9)
     }
 
+    #if compiler(>=6.2)   // exit tests (#expect(processExitsWith:)) need Swift 6.2
     @Test(arguments: [(0, 9), (9, 0), (-1, 0), (0, -1)])
     func subscriptRejectsOutOfBoundsCells(row: Int, col: Int) async {
         // Without a bounds check, (0, 9) would silently hit cell (1, 0).
@@ -135,4 +138,5 @@ struct SudokuTests {
             _ = sudoku[row, col]
         }
     }
+    #endif
 }

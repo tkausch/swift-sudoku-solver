@@ -10,13 +10,49 @@
 [![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE)
 [![Last commit](https://img.shields.io/github/last-commit/tkausch/swift-sudoku-solver)](https://github.com/tkausch/swift-sudoku-solver/commits/main)
 
-A 9×9 Sudoku library and command-line tool in Swift: solve any puzzle with
-depth-first search, and generate new easy puzzles.
+A 9×9 Sudoku library and command-line tool in Swift. It solves any valid puzzle,
+from newspaper-easy to grids designed to defeat computers, and generates new easy
+puzzles with exactly one solution.
+
+The code is small and documented, so it also works as a readable example of
+backtracking search, constraint checking and puzzle generation in modern Swift.
+
+## Features
+
+- **Solve any puzzle:** depth-first search that always branches on the cell with the
+  fewest candidates. Even the hardest built-in puzzle solves in about half a second.
+- **Solve like a human:** `NakedSingleSolver` only fills cells that have one possible
+  digit and tells you when it gets stuck, which is a simple measure of difficulty.
+- **Check uniqueness:** `countSolutions(_:limit:)` tells you whether a puzzle has
+  zero, one or several solutions.
+- **Generate puzzles:** random easy puzzles with symmetric clues, reproducible with
+  your own random number generator.
+- **Extensible:** solvers work with any grid that adopts `SolvableSudoku`, for example
+  a 4×4 variant, and new algorithms can adopt the `SudokuSolver` protocol.
+- **12 famous puzzles built in,** from the Wikipedia example to AI Escargot and Easter Monster.
 
 ## Requirements
 
 Swift 6.0+, macOS 13+ / iOS 16+. The library has no dependencies; the command-line
 tool uses [Swift Argument Parser](https://github.com/apple/swift-argument-parser).
+Tests run on Linux with Swift 6.0 in GitHub Actions.
+
+## Installation
+
+Add the package to your `Package.swift`:
+
+```swift
+dependencies: [
+    .package(url: "https://github.com/tkausch/swift-sudoku-solver.git", branch: "main"),
+],
+targets: [
+    .target(name: "MyApp", dependencies: [
+        .product(name: "SudokuSolver", package: "swift-sudoku-solver"),
+    ]),
+]
+```
+
+In Xcode, choose **File → Add Package Dependencies…** and enter the repository URL.
 
 ## Command-line tool
 
@@ -32,6 +68,28 @@ swift build -c release
 Puzzles are 81 cells row by row: digits 1-9, `0` or `.` for empty. The tool prints the
 grid, the board positions visited, the time and the solution. Run `sudoku --help` for
 all options. Invalid input exits with status 64, an unsolvable puzzle with status 1.
+
+A generated puzzle is also printed as a single line, so you can save it or pass it
+back to the solver:
+
+```
+$ sudoku --generate
+Generated easy puzzle with 36 clues:
+.91..3..784521..9..76.9...1.8...2....19...52....6...7.5...2.76..2..369859..5..13.
+
+. 9 1 | . . 3 | . . 7
+8 4 5 | 2 1 . | . 9 .
+. 7 6 | . 9 . | . . 1
+------+-------+------
+...
+
+Board positions visited: 46
+
+Solved in 0.2 ms:
+
+2 9 1 | 4 6 3 | 8 5 7
+...
+```
 
 ## Library
 

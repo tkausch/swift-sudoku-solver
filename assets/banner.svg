@@ -1,0 +1,143 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="320" viewBox="0 0 1280 320" role="img" aria-label="Swift Sudoku Solver">
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#0B1020"/>
+    <stop offset="0.55" stop-color="#151A3A"/>
+    <stop offset="1" stop-color="#2A1530"/>
+  </linearGradient>
+  <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+    <stop offset="0" stop-color="#F05138"/>
+    <stop offset="1" stop-color="#FFB15C"/>
+  </linearGradient>
+  <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+    <stop offset="0" stop-color="#F05138" stop-opacity="0.55"/>
+    <stop offset="1" stop-color="#F05138" stop-opacity="0"/>
+  </radialGradient>
+  <pattern id="dots" width="22" height="22" patternUnits="userSpaceOnUse">
+    <circle cx="2" cy="2" r="1" fill="#FFFFFF" fill-opacity="0.05"/>
+  </pattern>
+  <filter id="soft" x="-50%" y="-50%" width="200%" height="200%">
+    <feGaussianBlur stdDeviation="6"/>
+  </filter>
+</defs>
+<rect width="1280" height="320" rx="18" fill="url(#bg)"/>
+<rect width="1280" height="320" rx="18" fill="url(#dots)"/>
+<circle cx="190" cy="160" r="200" fill="url(#glow)" opacity="0.35"/>
+<rect x="62" y="33" width="254" height="254" rx="14" fill="#0E1328" fill-opacity="0.85" stroke="#FFFFFF" stroke-opacity="0.08"/>
+<text x="85.0" y="62.0" text-anchor="middle" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="700" fill="#E8ECF8">8</text>
+<text x="111.0" y="62.0" text-anchor="middle" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="600" fill="#FA7343" fill-opacity="0.47">1</text>
+<text x="137.0" y="62.0" text-anchor="middle" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="600" fill="#FA7343" fill-opacity="0.48">2</text>
+<text x="163.0" y="62.0" text-anchor="middle" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="600" fill="#FA7343" fill-opacity="0.50">7</text>
+<text x="189.0" y="62.0" text-anchor="middle" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="600" fill="#FA7343" fill-opacity="0.51">5</text>
+<text x="215.0" y="62.0" text-anchor="middle" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="600" fill="#FA7343" fill-opacity="0.53">3</text>
+<text x="241.0" y="62.0" text-anchor="middle" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="600" fill="#FA7343" fill-opacity="0.55">6</text>
+<text x="267.0" y="62.0" text-anchor="middle" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="600" fill="#FA7343" fill-opacity="0.56">4</text>
+<text x="293.0" y="62.0" text-anchor="middle" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="600" fill="#FA7343" fill-opacity="0.58">9</text>
+<text x="85.0" y="88.0" text-anchor="middle" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="600" fill="#FA7343" fill-opacity="0.60">9</text>
+<text x="111.0" y="88.0" text-anchor="middle" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="600" fill="#FA7343" fill-opacity="0.61">4</text>
+<text x="137.0" y="88.0" text-anchor="middle" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="700" fill="#E8ECF8">3</text>
+<text x="163.0" y="88.0" text-anchor="middle" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="700" fill="#E8ECF8">6</text>
+<text x="189.0" y="88.0" text-anchor="middle" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="600" fill="#FA7343" fill-opacity="0.63">8</text>
+<text x="215.0" y="88.0" text-anchor="middle" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="600" fill="#FA7343" fill-opacity="0.64">2</text>
+<text x="241.0" y="88.0" text-anchor="middle" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="600" fill="#FA7343" fill-opacity="0.66">1</text>
+<text x="267.0" y="88.0" text-anchor="middle" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="600" fill="#FA7343" fill-opacity="0.68">7</text>
+<text x="293.0" y="88.0" text-anchor="middle" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="600" fill="#FA7343" fill-opacity="0.69">5</text>
+<text x="85.0" y="114.0" text-anchor="middle" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="600" fill="#FA7343" fill-opacity="0.71">6</text>
+<text x="111.0" y="114.0" text-anchor="middle" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="700" fill="#E8ECF8">7</text>
+<text x="137.0" y="114.0" text-anchor="middle" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="600" fill="#FA7343" fill-opacity="0.73">5</text>
+<text x="163.0" y="114.0" text-anchor="middle" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="600" fill="#FA7343" fill-opacity="0.74">4</text>
+<text x="189.0" y="114.0" text-anchor="middle" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="700" fill="#E8ECF8">9</text>
+<text x="215.0" y="114.0" text-anchor="middle" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="600" fill="#FA7343" fill-opacity="0.76">1</text>
+<text x="241.0" y="114.0" text-anchor="middle" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="700" fill="#E8ECF8">2</text>
+<text x="267.0" y="114.0" text-anchor="middle" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="600" fill="#FA7343" fill-opacity="0.77">8</text>
+<text x="293.0" y="114.0" text-anchor="middle" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="600" fill="#FA7343" fill-opacity="0.79">3</text>
+<text x="85.0" y="140.0" text-anchor="middle" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="600" fill="#FA7343" fill-opacity="0.81">1</text>
+<text x="111.0" y="140.0" text-anchor="middle" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="700" fill="#E8ECF8">5</text>
+<text x="137.0" y="140.0" text-anchor="middle" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="600" fill="#FA7343" fill-opacity="0.82">4</text>
+<text x="163.0" y="140.0" text-anchor="middle" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="600" fill="#FA7343" fill-opacity="0.84">2</text>
+<text x="189.0" y="140.0" text-anchor="middle" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="600" fill="#FA7343" fill-opacity="0.85">3</text>
+<text x="215.0" y="140.0" text-anchor="middle" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="700" fill="#E8ECF8">7</text>
+<text x="241.0" y="140.0" text-anchor="middle" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="600" fill="#FA7343" fill-opacity="0.87">8</text>
+<text x="267.0" y="140.0" text-anchor="middle" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="600" fill="#FA7343" fill-opacity="0.89">9</text>
+<text x="293.0" y="140.0" text-anchor="middle" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="600" fill="#FA7343" fill-opacity="0.90">6</text>
+<text x="85.0" y="166.0" text-anchor="middle" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="600" fill="#FA7343" fill-opacity="0.92">3</text>
+<text x="111.0" y="166.0" text-anchor="middle" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="600" fill="#FA7343" fill-opacity="0.94">6</text>
+<text x="137.0" y="166.0" text-anchor="middle" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="600" fill="#FA7343" fill-opacity="0.95">9</text>
+<text x="163.0" y="166.0" text-anchor="middle" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="600" fill="#FA7343" fill-opacity="0.97">8</text>
+<text x="189.0" y="166.0" text-anchor="middle" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="700" fill="#E8ECF8">4</text>
+<text x="215.0" y="166.0" text-anchor="middle" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="700" fill="#E8ECF8">5</text>
+<text x="241.0" y="166.0" text-anchor="middle" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="700" fill="#E8ECF8">7</text>
+<text x="267.0" y="166.0" text-anchor="middle" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="600" fill="#FA7343" fill-opacity="0.98">2</text>
+<text x="293.0" y="166.0" text-anchor="middle" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="600" fill="#FA7343" fill-opacity="1.00">1</text>
+<text x="163.0" y="192.0" text-anchor="middle" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="700" fill="#E8ECF8">1</text>
+<text x="267.0" y="192.0" text-anchor="middle" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="700" fill="#E8ECF8">3</text>
+<text x="137.0" y="218.0" text-anchor="middle" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="700" fill="#E8ECF8">1</text>
+<text x="267.0" y="218.0" text-anchor="middle" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="700" fill="#E8ECF8">6</text>
+<text x="293.0" y="218.0" text-anchor="middle" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="700" fill="#E8ECF8">8</text>
+<text x="137.0" y="244.0" text-anchor="middle" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="700" fill="#E8ECF8">8</text>
+<text x="163.0" y="244.0" text-anchor="middle" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="700" fill="#E8ECF8">5</text>
+<text x="267.0" y="244.0" text-anchor="middle" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="700" fill="#E8ECF8">1</text>
+<text x="111.0" y="270.0" text-anchor="middle" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="700" fill="#E8ECF8">9</text>
+<text x="241.0" y="270.0" text-anchor="middle" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="700" fill="#E8ECF8">4</text>
+<rect x="68" y="169" width="34" height="34" rx="8" fill="#F05138" opacity="0.6" filter="url(#soft)"/>
+<rect x="73.5" y="174.5" width="23" height="23" rx="5" fill="#F05138" fill-opacity="0.18" stroke="#FA7343" stroke-width="2"/>
+<text x="85.0" y="192.0" text-anchor="middle" font-family="'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="700" fill="#FFFFFF">?</text>
+<line x1="72" y1="43" x2="72" y2="277" stroke="#FFFFFF" stroke-opacity="0.55" stroke-width="2"/>
+<line x1="72" y1="43" x2="306" y2="43" stroke="#FFFFFF" stroke-opacity="0.55" stroke-width="2"/>
+<line x1="98" y1="43" x2="98" y2="277" stroke="#FFFFFF" stroke-opacity="0.14" stroke-width="1"/>
+<line x1="72" y1="69" x2="306" y2="69" stroke="#FFFFFF" stroke-opacity="0.14" stroke-width="1"/>
+<line x1="124" y1="43" x2="124" y2="277" stroke="#FFFFFF" stroke-opacity="0.14" stroke-width="1"/>
+<line x1="72" y1="95" x2="306" y2="95" stroke="#FFFFFF" stroke-opacity="0.14" stroke-width="1"/>
+<line x1="150" y1="43" x2="150" y2="277" stroke="#FFFFFF" stroke-opacity="0.55" stroke-width="2"/>
+<line x1="72" y1="121" x2="306" y2="121" stroke="#FFFFFF" stroke-opacity="0.55" stroke-width="2"/>
+<line x1="176" y1="43" x2="176" y2="277" stroke="#FFFFFF" stroke-opacity="0.14" stroke-width="1"/>
+<line x1="72" y1="147" x2="306" y2="147" stroke="#FFFFFF" stroke-opacity="0.14" stroke-width="1"/>
+<line x1="202" y1="43" x2="202" y2="277" stroke="#FFFFFF" stroke-opacity="0.14" stroke-width="1"/>
+<line x1="72" y1="173" x2="306" y2="173" stroke="#FFFFFF" stroke-opacity="0.14" stroke-width="1"/>
+<line x1="228" y1="43" x2="228" y2="277" stroke="#FFFFFF" stroke-opacity="0.55" stroke-width="2"/>
+<line x1="72" y1="199" x2="306" y2="199" stroke="#FFFFFF" stroke-opacity="0.55" stroke-width="2"/>
+<line x1="254" y1="43" x2="254" y2="277" stroke="#FFFFFF" stroke-opacity="0.14" stroke-width="1"/>
+<line x1="72" y1="225" x2="306" y2="225" stroke="#FFFFFF" stroke-opacity="0.14" stroke-width="1"/>
+<line x1="280" y1="43" x2="280" y2="277" stroke="#FFFFFF" stroke-opacity="0.14" stroke-width="1"/>
+<line x1="72" y1="251" x2="306" y2="251" stroke="#FFFFFF" stroke-opacity="0.14" stroke-width="1"/>
+<line x1="306" y1="43" x2="306" y2="277" stroke="#FFFFFF" stroke-opacity="0.55" stroke-width="2"/>
+<line x1="72" y1="277" x2="306" y2="277" stroke="#FFFFFF" stroke-opacity="0.55" stroke-width="2"/>
+<text x="380" y="118" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="54" font-weight="800" fill="#FFFFFF" letter-spacing="-1">Swift Sudoku <tspan fill="url(#accent)">Solver</tspan></text>
+<rect x="380" y="136" width="64" height="4" rx="2" fill="url(#accent)"/>
+<text x="380" y="178" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="21" fill="#B8C0DC">Depth-first search · most-constrained-cell heuristic</text>
+<rect x="380" y="212" width="88" height="32" rx="16" fill="#FFFFFF" fill-opacity="0.06" stroke="#FFFFFF" stroke-opacity="0.16"/>
+<text x="424.0" y="233" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="600" fill="#DCE2F5">Swift 6</text>
+<rect x="478" y="212" width="131" height="32" rx="16" fill="#FFFFFF" fill-opacity="0.06" stroke="#FFFFFF" stroke-opacity="0.16"/>
+<text x="543.5" y="233" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="600" fill="#DCE2F5">Backtracking</text>
+<rect x="619" y="212" width="148" height="32" rx="16" fill="#FFFFFF" fill-opacity="0.06" stroke="#FFFFFF" stroke-opacity="0.16"/>
+<text x="693.0" y="233" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="600" fill="#DCE2F5">Protocol-based</text>
+<rect x="777" y="212" width="139" height="32" rx="16" fill="#FFFFFF" fill-opacity="0.06" stroke="#FFFFFF" stroke-opacity="0.16"/>
+<text x="846.5" y="233" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="600" fill="#DCE2F5">Swift Testing</text>
+<rect x="926" y="212" width="53" height="32" rx="16" fill="#FFFFFF" fill-opacity="0.06" stroke="#FFFFFF" stroke-opacity="0.16"/>
+<text x="952.5" y="233" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="14" font-weight="600" fill="#DCE2F5">CLI</text>
+<line x1="1150" y1="62" x2="1085" y2="128" stroke="#FFFFFF" stroke-opacity="0.22" stroke-width="2"/>
+<line x1="1150" y1="62" x2="1150" y2="128" stroke="#FA7343" stroke-width="3" stroke-linecap="round"/>
+<line x1="1150" y1="62" x2="1215" y2="128" stroke="#FFFFFF" stroke-opacity="0.22" stroke-width="2" stroke-dasharray="4 5"/>
+<line x1="1085" y1="128" x2="1060" y2="194" stroke="#FFFFFF" stroke-opacity="0.22" stroke-width="2"/>
+<line x1="1085" y1="128" x2="1110" y2="194" stroke="#FFFFFF" stroke-opacity="0.22" stroke-width="2"/>
+<line x1="1150" y1="128" x2="1140" y2="194" stroke="#FFFFFF" stroke-opacity="0.22" stroke-width="2"/>
+<line x1="1150" y1="128" x2="1190" y2="194" stroke="#FA7343" stroke-width="3" stroke-linecap="round"/>
+<line x1="1190" y1="194" x2="1165" y2="260" stroke="#FFFFFF" stroke-opacity="0.22" stroke-width="2"/>
+<line x1="1190" y1="194" x2="1215" y2="260" stroke="#FA7343" stroke-width="3" stroke-linecap="round"/>
+<circle cx="1150" cy="62" r="8" fill="#FA7343" fill-opacity="1"/>
+<circle cx="1085" cy="128" r="8" fill="#FFFFFF" fill-opacity="0.35"/>
+<circle cx="1150" cy="128" r="8" fill="#FA7343" fill-opacity="1"/>
+<circle cx="1215" cy="128" r="7" fill="none" stroke="#FFFFFF" stroke-opacity="0.25" stroke-width="2" stroke-dasharray="3 3"/>
+<circle cx="1060" cy="194" r="8" fill="#0E1328" stroke="#FFFFFF" stroke-opacity="0.3" stroke-width="2"/>
+<path d="M1057 191 l6 6 M1063 191 l-6 6" stroke="#FF6B6B" stroke-opacity="0.85" stroke-width="2" stroke-linecap="round"/>
+<circle cx="1110" cy="194" r="8" fill="#0E1328" stroke="#FFFFFF" stroke-opacity="0.3" stroke-width="2"/>
+<path d="M1107 191 l6 6 M1113 191 l-6 6" stroke="#FF6B6B" stroke-opacity="0.85" stroke-width="2" stroke-linecap="round"/>
+<circle cx="1140" cy="194" r="8" fill="#0E1328" stroke="#FFFFFF" stroke-opacity="0.3" stroke-width="2"/>
+<path d="M1137 191 l6 6 M1143 191 l-6 6" stroke="#FF6B6B" stroke-opacity="0.85" stroke-width="2" stroke-linecap="round"/>
+<circle cx="1190" cy="194" r="8" fill="#FA7343" fill-opacity="1"/>
+<circle cx="1165" cy="260" r="8" fill="#0E1328" stroke="#FFFFFF" stroke-opacity="0.3" stroke-width="2"/>
+<path d="M1162 257 l6 6 M1168 257 l-6 6" stroke="#FF6B6B" stroke-opacity="0.85" stroke-width="2" stroke-linecap="round"/>
+<circle cx="1215" cy="260" r="16" fill="#F05138" opacity="0.55" filter="url(#soft)"/>
+<circle cx="1215" cy="260" r="11" fill="url(#accent)"/>
+<path d="M1210 260 l3.5 3.5 l6.5 -7" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

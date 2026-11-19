@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/banner.svg" alt="Swift Sudoku Solver: a 9×9 grid mid-solve next to a depth-first search tree" width="100%">
+  <img src="assets/banner.svg" alt="Swift Sudoku Kit: a 9×9 grid mid-solve next to a depth-first search tree" width="100%">
 </p>
 
 [![Tests](https://github.com/tkausch/swift-sudoku-solver/actions/workflows/tests.yml/badge.svg)](https://github.com/tkausch/swift-sudoku-solver/actions/workflows/tests.yml)

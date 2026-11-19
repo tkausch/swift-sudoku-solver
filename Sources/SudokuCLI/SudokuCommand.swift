@@ -7,7 +7,7 @@ struct SudokuCommand: ParsableCommand {
         commandName: "sudoku",
         abstract: "Solve or generate a 9x9 Sudoku.",
         discussion: """
-            Without a puzzle, one of \(samplePuzzles.count) built-in puzzles is picked at random.
+            Without a puzzle, one of \(SudokuPuzzles.all.count) built-in puzzles is picked at random.
             With --generate, a new easy puzzle is generated and solved instead.
             """
     )
@@ -49,8 +49,8 @@ struct SudokuCommand: ParsableCommand {
         if let clues, !Self.minimumClueRange.contains(clues) {
             throw ValidationError("--clues must be between \(Self.minimumClueRange.lowerBound) and \(Self.minimumClueRange.upperBound).")
         }
-        if let sample, !samplePuzzles.indices.contains(sample - 1) {
-            throw ValidationError("--sample must be between 1 and \(samplePuzzles.count).")
+        if let sample, !SudokuPuzzles.all.indices.contains(sample - 1) {
+            throw ValidationError("--sample must be between 1 and \(SudokuPuzzles.all.count).")
         }
     }
 
@@ -62,7 +62,7 @@ struct SudokuCommand: ParsableCommand {
     
     func run() throws {
         if list {
-            for (i, sample) in samplePuzzles.enumerated() {
+            for (i, sample) in SudokuPuzzles.all.enumerated() {
                 print("\(i + 1). \(sample.name)")
             }
             return
@@ -73,13 +73,13 @@ struct SudokuCommand: ParsableCommand {
             puzzle = SudokuGenerator().generateEasy(minimumClues: clues ?? Self.defaultMinimumClues)
             let clueCount = puzzle.board.filter { $0 != 0 }.count
             print("Generated easy puzzle with \(clueCount) clues:")
-            print(puzzle.board.map { $0 == 0 ? "." : String($0) }.joined() + "\n")
+            print(SudokuParser.string(for: puzzle) + "\n")
         } else if let cells {
-            puzzle = try Self.parsePuzzle(cells)
+            puzzle = try SudokuParser.parse(cells)
         } else {
-            let sample = sample.map { samplePuzzles[$0 - 1] } ?? samplePuzzles.randomElement()!
+            let sample = sample.map { SudokuPuzzles.all[$0 - 1] } ?? SudokuPuzzles.all.randomElement()!
             print("Puzzle: \(sample.name)\n")
-            puzzle = try Self.parsePuzzle(sample.cells)
+            puzzle = try SudokuParser.parse(sample.cells)
         }
 
         print(puzzle)
@@ -99,27 +99,5 @@ struct SudokuCommand: ParsableCommand {
 
         printTime(elapsed)
         print(solution)
-    }
-
-    /// Parses `cellCount` cells (digits 0-9, `.` for empty, whitespace ignored).
-    static func parsePuzzle(_ input: String) throws -> Sudoku {
-        var board: [Int] = []
-        for ch in input where !ch.isWhitespace {
-            switch ch {
-            case ".": board.append(0)
-            case "0"..."9": board.append(Int(String(ch))!)
-            default:
-                throw ValidationError("Invalid character '\(ch)': only digits 0-9 (or . for empty) are allowed.")
-            }
-        }
-
-        guard board.count == Sudoku.cellCount else {
-            throw ValidationError("Invalid puzzle: expected exactly \(Sudoku.cellCount) cells, got \(board.count).")
-        }
-
-        guard let sudoku = Sudoku(board: board) else {
-            throw ValidationError("Invalid puzzle: duplicate digits in a row, column or box.")
-        }
-        return sudoku
     }
 }

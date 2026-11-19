@@ -7,7 +7,7 @@ struct SudokuCommand: ParsableCommand {
         commandName: "sudoku",
         abstract: "Solve or generate a 9x9 Sudoku.",
         discussion: """
-            Without a puzzle, one of \(ClassicPuzzles.all.count) built-in puzzles is picked at random.
+            Without a puzzle, one of \(SudokuPuzzle.all.count) built-in puzzles is picked at random.
             With --generate, a new easy puzzle is generated and solved instead.
             """
     )
@@ -49,8 +49,8 @@ struct SudokuCommand: ParsableCommand {
         if let clues, !Self.minimumClueRange.contains(clues) {
             throw ValidationError("--clues must be between \(Self.minimumClueRange.lowerBound) and \(Self.minimumClueRange.upperBound).")
         }
-        if let sample, !ClassicPuzzles.all.indices.contains(sample - 1) {
-            throw ValidationError("--sample must be between 1 and \(ClassicPuzzles.all.count).")
+        if let sample, !SudokuPuzzle.all.indices.contains(sample - 1) {
+            throw ValidationError("--sample must be between 1 and \(SudokuPuzzle.all.count).")
         }
     }
 
@@ -62,7 +62,7 @@ struct SudokuCommand: ParsableCommand {
     
     func run() throws {
         if list {
-            for (i, sample) in ClassicPuzzles.all.enumerated() {
+            for (i, sample) in SudokuPuzzle.all.enumerated() {
                 print("\(i + 1). \(sample.name)")
             }
             return
@@ -70,14 +70,14 @@ struct SudokuCommand: ParsableCommand {
 
         let puzzle: Sudoku
         if generate {
-            puzzle = SudokuGenerator().generateEasy(minimumClues: clues ?? Self.defaultMinimumClues)
+            puzzle = SudokuGenerator().generate(minimumClues: clues ?? Self.defaultMinimumClues)
             let clueCount = puzzle.grid.filter { $0 != Sudoku.empty }.count
             print("Generated easy puzzle with \(clueCount) clues:")
             print(SudokuParser.string(for: puzzle) + "\n")
         } else if let cells {
             puzzle = try SudokuParser.parse(cells)
         } else {
-            let sample = sample.map { ClassicPuzzles.all[$0 - 1] } ?? ClassicPuzzles.all.randomElement()!
+            let sample = sample.map { SudokuPuzzle.all[$0 - 1] } ?? SudokuPuzzle.all.randomElement()!
             print("Puzzle: \(sample.name)\n")
             puzzle = try SudokuParser.parse(sample.cells)
         }

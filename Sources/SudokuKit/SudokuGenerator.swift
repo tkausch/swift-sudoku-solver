@@ -1,7 +1,7 @@
 /// Generates new Sudoku puzzles.
 ///
 /// ```swift
-/// let puzzle = SudokuGenerator().generateEasy()
+/// let puzzle = SudokuGenerator().generate()
 /// print(puzzle)
 /// ```
 ///
@@ -9,7 +9,7 @@
 ///
 /// ```swift
 /// var rng = SomeSeededGenerator(seed: 42)
-/// let puzzle = SudokuGenerator().generateEasy(using: &rng)
+/// let puzzle = SudokuGenerator().generate(using: &rng)
 /// ```
 public struct SudokuGenerator: Sendable {
     /// Creates a generator.
@@ -49,23 +49,28 @@ public struct SudokuGenerator: Sendable {
 
     /// Generates an easy puzzle using the system's random number generator.
     ///
-    /// - Parameter minimumClues: See ``generateEasy(minimumClues:using:)``.
-    public func generateEasy(minimumClues: Int = 36) -> Sudoku {
+    /// - Parameter minimumClues: See ``generate(minimumClues:using:)``.
+    public func generate(minimumClues: Int = 36) -> Sudoku {
         var rng = SystemRandomNumberGenerator()
         return generate(minimumClues: minimumClues, using: &rng)
+    }
+
+    @available(*, deprecated, renamed: "generate(minimumClues:)")
+    public func generateEasy(minimumClues: Int = 36) -> Sudoku {
+        generate(minimumClues: minimumClues)
     }
 
     /// Generates a puzzle of the given difficulty.
     ///
     /// - Parameters:
-    ///   - difficulty: How many clues the puzzle keeps; see ``Difficulty``.
+    ///   - difficulty: How many clues the puzzle keeps; see ``SudokuDifficulty``.
     ///   - rng: The source of randomness.
-    public func generate<R: RandomNumberGenerator>(_ difficulty: Difficulty, using rng: inout R) -> Sudoku {
+    public func generate<R: RandomNumberGenerator>(_ difficulty: SudokuDifficulty, using rng: inout R) -> Sudoku {
         generate(minimumClues: difficulty.minimumClues, using: &rng)
     }
 
     /// Generates a puzzle of the given difficulty using the system's random number generator.
-    public func generate(_ difficulty: Difficulty) -> Sudoku {
+    public func generate(_ difficulty: SudokuDifficulty) -> Sudoku {
         var rng = SystemRandomNumberGenerator()
         return generate(difficulty, using: &rng)
     }

@@ -76,7 +76,7 @@ struct GeneratorTests {
     }
 
     @Test func systemRandomGeneratorWorks() {
-        let puzzle = SudokuGenerator().generateEasy()
+        let puzzle = SudokuGenerator().generate()
         #expect(NakedSingleSolver().solve(puzzle) != nil)
     }
 }

@@ -99,7 +99,7 @@ import SudokuKit
 let puzzle = Sudoku(grid: cells)!                  // 81 values, 0 = empty
 let solution = DFSSolver().solve(puzzle)            // nil if unsolvable
 let isUnique = DFSSolver().countSolutions(puzzle) == 1
-let easy = SudokuGenerator().generateEasy()         // pass `using: &rng` to make it reproducible
+let easy = SudokuGenerator().generate()             // pass `using: &rng` to make it reproducible
 ```
 
 | Type | Purpose |
@@ -109,7 +109,7 @@ let easy = SudokuGenerator().generateEasy()         // pass `using: &rng` to mak
 | `SudokuSolver` | Protocol for solving algorithms: `solve(_:) -> Puzzle?`. |
 | `DFSSolver` | Backtracking solver; also `solveCountingPositions(_:)` and `countSolutions(_:limit:)`. |
 | `NakedSingleSolver` | Fills only cells with exactly one candidate, never guesses. Reports `solved`, `stuck` or `contradiction`. |
-| `SudokuGenerator` | `generateEasy(minimumClues:)`: puzzles solvable with naked singles alone. |
+| `SudokuGenerator` | `generate(minimumClues:)`, `generate(_:)` with a `SudokuDifficulty`: puzzles solvable with naked singles alone. |
 
 ## How it works
 

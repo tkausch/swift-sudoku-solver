@@ -1,11 +1,11 @@
 /// A well-known puzzle with exactly one solution.
-public struct ClassicPuzzles: Identifiable, Sendable {
+public struct SudokuPuzzle: Identifiable, Sendable {
     public let name: String
     public let cells: String
     public var id: String { cells }
 
     /// Puzzles from the swift-sudoku-solver collection, easy to extremely hard.
-    public static let all: [ClassicPuzzles] = [
+    public static let all: [SudokuPuzzle] = [
         .init(name: "Wikipedia example", cells: "53..7....6..195....98....6.8...6...34..8.3..17...2...6.6....28....419..5....8..79"),
         .init(name: "Project Euler #96, grid 01", cells: "..3.2.6..9..3.5..1..18.64....81.29..7.......8..67.82....26.95..8..2.3..9..5.1.3.."),
         .init(name: "Project Euler #96, grid 02", cells: "2...8.3...6..7..84.3.5..2.9...1.54.8.........4.27.6...3.1..7.4.72..4..6...4.1...3"),
@@ -16,3 +16,6 @@ public struct ClassicPuzzles: Identifiable, Sendable {
         .init(name: "AI Escargot", cells: "1....7.9..3..2...8..96..5....53..9...1..8...26....4...3......1..4......7..7...3.."),
     ]
 }
+
+@available(*, deprecated, renamed: "SudokuPuzzle")
+public typealias ClassicPuzzles = SudokuPuzzle

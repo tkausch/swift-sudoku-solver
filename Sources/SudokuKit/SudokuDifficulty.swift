@@ -1,6 +1,6 @@
 /// How many clues a generated puzzle keeps. All generated puzzles can be solved
 /// with naked singles; fewer clues means more cells to work out.
-public enum Difficulty: String, CaseIterable, Identifiable, Sendable {
+public enum SudokuDifficulty: String, CaseIterable, Identifiable, Sendable {
     case easy, medium, hard
 
     public var id: Self { self }
@@ -14,3 +14,6 @@ public enum Difficulty: String, CaseIterable, Identifiable, Sendable {
         }
     }
 }
+
+@available(*, deprecated, renamed: "SudokuDifficulty")
+public typealias Difficulty = SudokuDifficulty

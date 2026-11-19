@@ -14,13 +14,15 @@ struct SudokuParserTests {
     @Test func ignoresWhitespaceAndNewlines() throws {
         let spaced = puzzle.map { String($0) }.joined(separator: " ")
         let sudoku = try SudokuParser.parse(spaced)
-        #expect(sudoku.board == (try SudokuParser.parse(puzzle)).board)
+        let expected = try SudokuParser.parse(puzzle)
+        #expect(sudoku.board == expected.board)
     }
 
     @Test func treatsZeroAndDotAsEmpty() throws {
         let withZeros = puzzle.replacingOccurrences(of: ".", with: "0")
         let sudoku = try SudokuParser.parse(withZeros)
-        #expect(sudoku.board == (try SudokuParser.parse(puzzle)).board)
+        let expected = try SudokuParser.parse(puzzle)
+        #expect(sudoku.board == expected.board)
     }
 
     @Test func rejectsWrongLength() {
@@ -52,6 +54,7 @@ struct SudokuParserTests {
     @Test func roundTripsThroughParseAndFormat() throws {
         let sudoku = try SudokuParser.parse(puzzle)
         let formatted = SudokuParser.string(for: sudoku)
-        #expect(try SudokuParser.parse(formatted) == sudoku)
+        let reparsed = try SudokuParser.parse(formatted)
+        #expect(reparsed == sudoku)
     }
 }

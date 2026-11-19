@@ -18,7 +18,7 @@ struct SplitMix64: RandomNumberGenerator {
 struct GeneratorTests {
     func easyPuzzle(seed: UInt64, minimumClues: Int = 36) -> Sudoku {
         var rng = SplitMix64(seed: seed)
-        return SudokuGenerator().generateEasy(minimumClues: minimumClues, using: &rng)
+        return SudokuGenerator().generate(minimumClues: minimumClues, using: &rng)
     }
 
     func clues(_ sudoku: Sudoku) -> Int {

@@ -28,7 +28,7 @@ public struct SudokuGenerator: Sendable {
     ///     solvable with naked singles. Must be in `17...81`.
     ///   - rng: The source of randomness.
     /// - Returns: An easy puzzle with at least `minimumClues` clues.
-    public func generateEasy<R: RandomNumberGenerator>(minimumClues: Int = 36, using rng: inout R) -> Sudoku {
+    public func generate<R: RandomNumberGenerator>(minimumClues: Int = 36, using rng: inout R) -> Sudoku {
         precondition((17...Sudoku.cellCount).contains(minimumClues), "minimumClues must be in 17...\(Sudoku.cellCount)")
 
         var sudoku = randomFilledSudoku(using: &rng)
@@ -52,7 +52,22 @@ public struct SudokuGenerator: Sendable {
     /// - Parameter minimumClues: See ``generateEasy(minimumClues:using:)``.
     public func generateEasy(minimumClues: Int = 36) -> Sudoku {
         var rng = SystemRandomNumberGenerator()
-        return generateEasy(minimumClues: minimumClues, using: &rng)
+        return generate(minimumClues: minimumClues, using: &rng)
+    }
+
+    /// Generates a puzzle of the given difficulty.
+    ///
+    /// - Parameters:
+    ///   - difficulty: How many clues the puzzle keeps; see ``Difficulty``.
+    ///   - rng: The source of randomness.
+    public func generate<R: RandomNumberGenerator>(_ difficulty: Difficulty, using rng: inout R) -> Sudoku {
+        generate(minimumClues: difficulty.minimumClues, using: &rng)
+    }
+
+    /// Generates a puzzle of the given difficulty using the system's random number generator.
+    public func generate(_ difficulty: Difficulty) -> Sudoku {
+        var rng = SystemRandomNumberGenerator()
+        return generate(difficulty, using: &rng)
     }
 
     /// A cell position on the grid.

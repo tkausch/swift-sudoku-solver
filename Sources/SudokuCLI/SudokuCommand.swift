@@ -13,7 +13,7 @@ struct SudokuCommand: ParsableCommand {
     )
 
     @Argument(help: ArgumentHelp(
-        "\(Sudoku.cellCount) cells row by row: digits 1-\(Sudoku.size), 0 or . for empty.",
+        "\(Sudoku.gridSize) cells row by row: digits 1-\(Sudoku.size), 0 or . for empty.",
         valueName: "puzzle"))
     var cells: String?
 
@@ -33,7 +33,7 @@ struct SudokuCommand: ParsableCommand {
                                valueName: "n"))
     var clues: Int?
 
-    static let minimumClueRange = 17...Sudoku.cellCount
+    static let minimumClueRange = 17...Sudoku.gridSize
     static let defaultMinimumClues = 36
 
     mutating func validate() throws {
@@ -71,7 +71,7 @@ struct SudokuCommand: ParsableCommand {
         let puzzle: Sudoku
         if generate {
             puzzle = SudokuGenerator().generateEasy(minimumClues: clues ?? Self.defaultMinimumClues)
-            let clueCount = puzzle.board.filter { $0 != Sudoku.empty }.count
+            let clueCount = puzzle.grid.filter { $0 != Sudoku.empty }.count
             print("Generated easy puzzle with \(clueCount) clues:")
             print(SudokuParser.string(for: puzzle) + "\n")
         } else if let cells {

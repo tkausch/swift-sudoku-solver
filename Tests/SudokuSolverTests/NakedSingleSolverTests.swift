@@ -3,7 +3,7 @@ import Testing
 
 struct NakedSingleSolverTests {
     func sudoku(_ string: String) throws -> Sudoku {
-        try #require(Sudoku(board: string.compactMap(\.wholeNumberValue)))
+        try #require(Sudoku(grid: string.compactMap(\.wholeNumberValue)))
     }
 
     let easy = "530070000600195000098000060800060003400803001700020006060000280000419005000080079"
@@ -41,9 +41,9 @@ struct NakedSingleSolverTests {
         let solution = try #require(DFSSolver().solve(puzzle))
         var grid = puzzle
         #expect(NakedSingleSolver().fillNakedSingles(&grid) == .stuck)
-        #expect(grid.board.filter { $0 == 0 }.count == puzzle.board.filter { $0 == 0 }.count - 1)
-        for i in grid.board.indices where grid.board[i] != 0 {
-            #expect(grid.board[i] == solution.board[i])   // givens kept, placed digit correct
+        #expect(grid.grid.filter { $0 == 0 }.count == puzzle.grid.filter { $0 == 0 }.count - 1)
+        for i in grid.grid.indices where grid.grid[i] != 0 {
+            #expect(grid.grid[i] == solution.grid[i])   // givens kept, placed digit correct
         }
     }
 
@@ -64,9 +64,9 @@ struct NakedSingleSolverTests {
     /// One blank cell per row of a solved grid: each is a naked single.
     @Test func fillsSingleBlanks() throws {
         let solution = try sudoku(easySolution)
-        var cells = solution.board
+        var cells = solution.grid
         for row in 0..<9 { cells[row * 9 + row] = 0 }
-        let puzzle = try #require(Sudoku(board: cells))
+        let puzzle = try #require(Sudoku(grid: cells))
         #expect(NakedSingleSolver().solve(puzzle) == solution)
     }
 

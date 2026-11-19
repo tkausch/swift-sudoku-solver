@@ -10,9 +10,9 @@ struct SudokuTests {
     }
 
     @Test func parsesBoardIntoRows() throws {
-        let sudoku = try #require(Sudoku(board: board(puzzle)))
-        #expect(sudoku.board.count == Sudoku.cellCount)
-        #expect(sudoku.board == board(puzzle))
+        let sudoku = try #require(Sudoku(grid: board(puzzle)))
+        #expect(sudoku.grid.count == Sudoku.gridSize)
+        #expect(sudoku.grid == board(puzzle))
         #expect(sudoku[1, 3] == 1)   // row-major: index 1 * 9 + 3 = 12
         #expect(sudoku[0, 0] == 5)
         #expect(sudoku[0, 2] == 0)
@@ -21,39 +21,39 @@ struct SudokuTests {
     }
 
     @Test func rejectsWrongLength() {
-        #expect(Sudoku(board: [1, 2, 3]) == nil)
+        #expect(Sudoku(grid: [1, 2, 3]) == nil)
     }
 
     @Test(arguments: [-1, 10, 42, Int.min, Int.max])
     func rejectsOutOfRangeValues(value: Int) {
         var cells = Array(repeating: 0, count: 81)
         cells[40] = value
-        #expect(Sudoku(board: cells) == nil)
+        #expect(Sudoku(grid: cells) == nil)
     }
 
     @Test func acceptsEveryValueFromZeroToNine() {
         var cells = Array(repeating: 0, count: 81)
         cells[0..<10] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]   // 0 in row 0, 1...9 spread over rows 0-1
-        #expect(Sudoku(board: cells) != nil)
+        #expect(Sudoku(grid: cells) != nil)
     }
 
     #if compiler(>=6.2)   // exit tests (#expect(processExitsWith:)) need Swift 6.2
     @Test(arguments: [-1, 10])
     func subscriptRejectsOutOfRangeValues(value: Int) async {
         await #expect(processExitsWith: .failure) { [value] in
-            var sudoku = Sudoku(board: Array(repeating: 0, count: 81))!
+            var sudoku = Sudoku(grid: Array(repeating: 0, count: 81))!
             sudoku[0, 0] = value
         }
     }
     #endif
 
     @Test func partialPuzzleIsValid() throws {
-        let sudoku = try #require(Sudoku(board: board(puzzle)))
+        let sudoku = try #require(Sudoku(grid: board(puzzle)))
         #expect(sudoku.isValidSudoku())
     }
 
     @Test func solvedGridIsValidAndComplete() throws {
-        let sudoku = try #require(Sudoku(board: board(solution)))
+        let sudoku = try #require(Sudoku(grid: board(solution)))
         #expect(sudoku.isComplete)
         #expect(sudoku.isValidSudoku())
     }
@@ -62,39 +62,39 @@ struct SudokuTests {
     @Test func rejectsDuplicateInRow() {
         var cells = Array(repeating: 0, count: 81)
         cells[0] = 5; cells[8] = 5
-        #expect(Sudoku(board: cells) == nil)
+        #expect(Sudoku(grid: cells) == nil)
     }
 
     @Test func rejectsDuplicateInColumn() {
         var cells = Array(repeating: 0, count: 81)
         cells[0] = 5; cells[72] = 5
-        #expect(Sudoku(board: cells) == nil)
+        #expect(Sudoku(grid: cells) == nil)
     }
 
     @Test func rejectsDuplicateInBox() {
         var cells = Array(repeating: 0, count: 81)
         cells[0] = 5; cells[20] = 5   // (0,0) and (2,2)
-        #expect(Sudoku(board: cells) == nil)
+        #expect(Sudoku(grid: cells) == nil)
     }
 
     @Test func detectsDuplicateAfterEditing() throws {
-        var sudoku = try #require(Sudoku(board: Array(repeating: 0, count: 81)))
+        var sudoku = try #require(Sudoku(grid: Array(repeating: 0, count: 81)))
         sudoku[0, 0] = 5
         sudoku[0, 8] = 5
         #expect(!sudoku.isValidSudoku())
     }
 
     @Test func subscriptSetsValue() throws {
-        var sudoku = try #require(Sudoku(board: board(puzzle)))
+        var sudoku = try #require(Sudoku(grid: board(puzzle)))
         sudoku[0, 2] = 4
         #expect(sudoku[0, 2] == 4)
-        #expect(sudoku.board[2] == 4)
+        #expect(sudoku.grid[2] == 4)
     }
 
     // MARK: - candidates
 
     @Test func candidatesExcludeRowColumnAndBox() throws {
-        let sudoku = try #require(Sudoku(board: board(puzzle)))
+        let sudoku = try #require(Sudoku(grid: board(puzzle)))
         // Cell (0, 2): row has 5 3 7, column has 8, box has 5 3 6 9 8 → 1 2 4 left.
         #expect(sudoku.candidates(atRow: 0, col: 2) == [1, 2, 4])
         // Cell (4, 4): row 4 8 3 1, column 7 9 6 2 1 8, box 6 8 3 2 → only 5.
@@ -102,18 +102,18 @@ struct SudokuTests {
     }
 
     @Test func candidatesOfFilledCellAreEmpty() throws {
-        let sudoku = try #require(Sudoku(board: board(puzzle)))
+        let sudoku = try #require(Sudoku(grid: board(puzzle)))
         #expect(sudoku.candidates(atRow: 0, col: 0) == [])
     }
 
     @Test func emptyGridAllowsEveryDigit() throws {
-        let sudoku = try #require(Sudoku(board: Array(repeating: 0, count: Sudoku.cellCount)))
+        let sudoku = try #require(Sudoku(grid: Array(repeating: 0, count: Sudoku.gridSize)))
         #expect(sudoku.candidates(atRow: 4, col: 4) == Array(1...9))
     }
 
     @Test func candidatesMatchSolution() throws {
-        let sudoku = try #require(Sudoku(board: board(puzzle)))
-        let solved = try #require(Sudoku(board: board(solution)))
+        let sudoku = try #require(Sudoku(grid: board(puzzle)))
+        let solved = try #require(Sudoku(grid: board(solution)))
         for row in 0..<Sudoku.size {
             for col in 0..<Sudoku.size where sudoku[row, col] == 0 {
                 #expect(sudoku.candidates(atRow: row, col: col).contains(solved[row, col]))
@@ -122,11 +122,11 @@ struct SudokuTests {
     }
 
     @Test func lastCellMapsToLastIndex() throws {
-        var sudoku = try #require(Sudoku(board: board(puzzle)))
+        var sudoku = try #require(Sudoku(grid: board(puzzle)))
         sudoku[8, 7] = 0
-        #expect(sudoku.board[79] == 0)
+        #expect(sudoku.grid[79] == 0)
         #expect(sudoku[8, 8] == 9)
-        #expect(sudoku.board[80] == 9)
+        #expect(sudoku.grid[80] == 9)
     }
 
     #if compiler(>=6.2)   // exit tests (#expect(processExitsWith:)) need Swift 6.2
@@ -134,7 +134,7 @@ struct SudokuTests {
     func subscriptRejectsOutOfBoundsCells(row: Int, col: Int) async {
         // Without a bounds check, (0, 9) would silently hit cell (1, 0).
         await #expect(processExitsWith: .failure) { [row, col] in
-            let sudoku = Sudoku(board: Array(repeating: 0, count: Sudoku.cellCount))!
+            let sudoku = Sudoku(grid: Array(repeating: 0, count: Sudoku.gridSize))!
             _ = sudoku[row, col]
         }
     }

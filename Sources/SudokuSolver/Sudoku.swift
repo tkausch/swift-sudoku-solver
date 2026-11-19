@@ -3,12 +3,12 @@
 /// The grid has 9 rows, 9 columns and 9 boxes of 3×3 cells. Each cell is either
 /// empty (`0`) or holds a digit `1...9`. Rows and columns are numbered from `0`.
 ///
-/// A `Sudoku` can only be created from a board without conflicting digits, so
+/// A `Sudoku` can only be created from a grid without conflicting digits, so
 /// every instance starts out valid:
 ///
 /// ```swift
-/// let cells = Array(repeating: Sudoku.empty, count: Sudoku.cellCount)
-/// var sudoku = Sudoku(board: cells)!
+/// let cells = Array(repeating: Sudoku.empty, count: Sudoku.gridSize)
+/// var sudoku = Sudoku(grid: cells)!
 /// sudoku[0, 0] = 5
 /// print(sudoku.candidates(atRow: 0, col: 1))   // [1, 2, 3, 4, 6, 7, 8, 9]
 /// ```
@@ -20,36 +20,36 @@ public struct Sudoku: Equatable, Sendable, CustomStringConvertible {
     /// The number of rows and columns in one box (`3`).
     public static let boxSize = 3
 
-    /// The total number of cells on the board (`81`).
-    public static let cellCount = size * size
+    /// The total number of cells in the grid (`81`).
+    public static let gridSize = size * size
 
     /// The values a cell may hold: `0` for an empty cell, or a digit `1...size`.
-    public static let allowedValues = 0...size
+    public static let allowedDigits = 0...size
 
-    /// Returns whether a value may be stored in a cell.
+    /// Returns whether a digit may be stored in a cell.
     ///
-    /// - Parameter value: The value to check.
-    /// - Returns: `true` if `value` is in ``allowedValues``.
-    public static func isAllowedValue(_ value: Int) -> Bool {
-        allowedValues.contains(value)
+    /// - Parameter digit: The digit to check.
+    /// - Returns: `true` if `digit` is in ``allowedDigits``.
+    public static func isAllowedDigit(_ digit: Int) -> Bool {
+        allowedDigits.contains(digit)
     }
 
-    /// All ``cellCount`` cells in row-major order.
+    /// All ``gridSize`` cells in row-major order.
     ///
-    /// The cell at `row`, `col` is `board[row * size + col]`; `0` marks an empty cell.
+    /// The cell at `row`, `col` is `grid[row * size + col]`; `0` marks an empty cell.
     /// Use ``subscript(_:_:)`` to change cells.
-    public private(set) var board: [Int]
+    public private(set) var grid: [Int]
 
     /// Creates a grid from a list of cell values.
     ///
-    /// - Parameter board: ``cellCount`` values in row-major order: `0` for an
+    /// - Parameter grid: ``gridSize`` values in row-major order: `0` for an
     ///   empty cell, `1...size` for a given digit.
-    /// - Returns: `nil` if `board` doesn't have ``cellCount`` values, contains
-    ///   a value outside ``allowedValues``, or has the same digit twice in a row,
+    /// - Returns: `nil` if `grid` doesn't have ``gridSize`` values, contains
+    ///   a value outside ``allowedDigits``, or has the same digit twice in a row,
     ///   column or box.
-    public init?(board: [Int]) {
-        guard board.count == Self.cellCount, board.allSatisfy(Self.isAllowedValue) else { return nil }
-        self.board = board
+    public init?(grid: [Int]) {
+        guard grid.count == Self.gridSize, grid.allSatisfy(Self.isAllowedDigit) else { return nil }
+        self.grid = grid
         guard isValidSudoku() else { return nil }
     }
 
@@ -74,7 +74,7 @@ public struct Sudoku: Equatable, Sendable, CustomStringConvertible {
     /// call ``isValidSudoku()`` afterwards if needed.
     ///
     /// - Precondition: `row` and `col` are in `0..<size`; a written value is in
-    ///   ``allowedValues``. Violating either stops the program.
+    ///   ``allowedDigits``. Violating either stops the program.
     ///
     /// - Parameters:
     ///   - row: The row, `0..<size`.
@@ -82,11 +82,11 @@ public struct Sudoku: Equatable, Sendable, CustomStringConvertible {
     /// - Returns: The cell's value: `0` if empty, otherwise a digit `1...size`.
     public subscript(row: Int, col: Int) -> Int {
         get {
-            return board[Self.checkedIndex(row, col)]
+            return grid[Self.checkedIndex(row, col)]
         }
         set {
-            precondition(Self.isAllowedValue(newValue), "Value \(newValue) is outside \(Self.allowedValues)")
-            board[Self.checkedIndex(row, col)] = newValue
+            precondition(Self.isAllowedDigit(newValue), "Value \(newValue) is outside \(Self.allowedDigits)")
+            grid[Self.checkedIndex(row, col)] = newValue
         }
     }
 
@@ -94,7 +94,7 @@ public struct Sudoku: Equatable, Sendable, CustomStringConvertible {
     ///
     /// This doesn't check validity: combine it with ``isValidSudoku()`` to tell
     /// whether the grid is solved.
-    public var isComplete: Bool { !board.contains(Self.empty) }
+    public var isComplete: Bool { !grid.contains(Self.empty) }
 
     /// The grid as text, one row per line.
     ///
@@ -145,21 +145,21 @@ public struct Sudoku: Equatable, Sendable, CustomStringConvertible {
         let startRow = (r / boxSize) * boxSize
         let startCol = (c / boxSize) * boxSize
         let box = (startRow..<startRow + boxSize).flatMap { row in
-            board[Self.index(row, startCol)..<Self.index(row, startCol + boxSize)]
+            grid[Self.index(row, startCol)..<Self.index(row, startCol + boxSize)]
         }
         return box
     }
     
     private func colUnit(atCol col: Int) -> [Int] {
-        return (0..<Self.size).map { board[Self.index($0, col)] }
+        return (0..<Self.size).map { grid[Self.index($0, col)] }
     }
     
     private func rowUnit(atRow row: Int) -> [Int] {
         let start = Self.index(row,0)
-        return Array(board[start..<start + Self.size])
+        return Array(grid[start..<start + Self.size])
     }
     
-    /// Returns the position in `board` of the cell at `row`, `col`.
+    /// Returns the position in `grid` of the cell at `row`, `col`.
     @inline(__always)
     private static func index(_ row: Int, _ col: Int) -> Int {
         row * size + col

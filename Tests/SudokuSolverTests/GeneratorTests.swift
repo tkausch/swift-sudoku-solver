@@ -22,7 +22,7 @@ struct GeneratorTests {
     }
 
     func clues(_ sudoku: Sudoku) -> Int {
-        sudoku.board.filter { $0 != 0 }.count
+        sudoku.grid.filter { $0 != 0 }.count
     }
 
     @Test(arguments: 1...10 as ClosedRange<UInt64>)
@@ -52,7 +52,7 @@ struct GeneratorTests {
     }
 
     @Test func emptyCellsAreSymmetric() {
-        let board = easyPuzzle(seed: 3).board
+        let board = easyPuzzle(seed: 3).grid
         for i in board.indices {
             #expect((board[i] == 0) == (board[80 - i] == 0))
         }
@@ -70,8 +70,8 @@ struct GeneratorTests {
         let puzzle = easyPuzzle(seed: 5)
         let solution = try #require(DFSSolver().solve(puzzle))
         #expect(solution.isValidSudoku())
-        for i in puzzle.board.indices where puzzle.board[i] != 0 {
-            #expect(solution.board[i] == puzzle.board[i])
+        for i in puzzle.grid.indices where puzzle.grid[i] != 0 {
+            #expect(solution.grid[i] == puzzle.grid[i])
         }
     }
 

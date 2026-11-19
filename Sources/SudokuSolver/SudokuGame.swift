@@ -6,8 +6,8 @@
 /// ```swift
 /// var game = SudokuGame(puzzle: SudokuGenerator().generate(.medium))
 /// game.isGiven(atRow: 0, col: 0)       // true if (0, 0) is a clue
-/// game.move(4, atRow: 0, col: 1)       // false if (0, 1) is a given
-/// game.move(Sudoku.empty, atRow: 0, col: 1)   // clears the entry
+/// game.set(4, atRow: 0, col: 1)        // false if (0, 1) is a given
+/// game.set(Sudoku.empty, atRow: 0, col: 1)   // clears the entry
 /// game.undo()                          // puts the 4 back
 /// game.isSolved
 /// ```
@@ -29,7 +29,7 @@ public struct SudokuGame: Equatable, Sendable {
         let previous: Int
     }
 
-    /// Changes made by ``move(_:atRow:col:)``, oldest first.
+    /// Changes made by ``set(_:atRow:col:)``, oldest first.
     private var history: [Move] = []
 
     /// Starts a game with no entries yet.
@@ -55,17 +55,17 @@ public struct SudokuGame: Equatable, Sendable {
     /// Each change can be taken back with ``undo()``. Writing the digit a cell
     /// already holds changes nothing and isn't recorded.
     ///
-    /// - Precondition: `row` and `col` are in `0..<Sudoku.size`, and `digit`
-    ///   is in ``Sudoku/allowedValues``.
+    /// - Precondition: `row` and `col` are in `0..<Sudoku.size`.
     ///
     /// - Parameters:
     ///   - digit: A digit `1...Sudoku.size`, or ``SolvableSudoku/empty`` to clear the cell.
     ///   - row: The row, `0..<Sudoku.size`.
     ///   - col: The column, `0..<Sudoku.size`.
-    /// - Returns: `false` if the cell is a given and was left unchanged.
+    /// - Returns: `false` if `digit` is outside ``Sudoku/allowedDigits`` or the
+    ///   cell is a given. The board is left unchanged in both cases.
     @discardableResult
-    public mutating func move(_ digit: Int, atRow row: Int, col: Int) -> Bool {
-        guard !isGiven(atRow: row, col: col) else { return false }
+    public mutating func set(_ digit: Int, atRow row: Int, col: Int) -> Bool {
+        guard Sudoku.isAllowedDigit(digit), !isGiven(atRow: row, col: col) else { return false }
         let previous = board[row, col]
         guard digit != previous else { return true }
         board[row, col] = digit
@@ -76,7 +76,7 @@ public struct SudokuGame: Equatable, Sendable {
     /// Whether there is a change that ``undo()`` can take back.
     public var canUndo: Bool { !history.isEmpty }
 
-    /// Takes back the most recent change made with ``move(_:atRow:col:)``.
+    /// Takes back the most recent change made with ``set(_:atRow:col:)``.
     ///
     /// Call it repeatedly to step back to the original puzzle.
     ///

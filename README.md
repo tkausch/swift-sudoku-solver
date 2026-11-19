@@ -96,7 +96,7 @@ Solved in 0.2 ms:
 ```swift
 import SudokuSolver
 
-let puzzle = Sudoku(board: cells)!                  // 81 values, 0 = empty
+let puzzle = Sudoku(grid: cells)!                  // 81 values, 0 = empty
 let solution = DFSSolver().solve(puzzle)            // nil if unsolvable
 let isUnique = DFSSolver().countSolutions(puzzle) == 1
 let easy = SudokuGenerator().generateEasy()         // pass `using: &rng` to make it reproducible

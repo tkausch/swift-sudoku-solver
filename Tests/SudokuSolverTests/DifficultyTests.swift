@@ -3,7 +3,7 @@ import Testing
 
 struct DifficultyTests {
     func clues(_ sudoku: Sudoku) -> Int {
-        sudoku.board.filter { $0 != 0 }.count
+        sudoku.grid.filter { $0 != 0 }.count
     }
 
     @Test func harderMeansFewerMinimumClues() {

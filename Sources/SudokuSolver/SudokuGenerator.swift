@@ -29,10 +29,10 @@ public struct SudokuGenerator: Sendable {
     ///   - rng: The source of randomness.
     /// - Returns: An easy puzzle with at least `minimumClues` clues.
     public func generate<R: RandomNumberGenerator>(minimumClues: Int = 36, using rng: inout R) -> Sudoku {
-        precondition((17...Sudoku.cellCount).contains(minimumClues), "minimumClues must be in 17...\(Sudoku.cellCount)")
+        precondition((17...Sudoku.gridSize).contains(minimumClues), "minimumClues must be in 17...\(Sudoku.gridSize)")
 
         var sudoku = randomFilledSudoku(using: &rng)
-        var clues = Sudoku.cellCount
+        var clues = Sudoku.gridSize
         let solver = NakedSingleSolver<Sudoku>()
 
         for pair in symmetricPairs().shuffled(using: &rng) {
@@ -77,7 +77,7 @@ public struct SudokuGenerator: Sendable {
     /// (r, c) and (8 - r, 8 - c). The center cell is its own mirror, so its "pair" has one cell.
     private func symmetricPairs() -> [[Index]] {
         let last = Sudoku.size - 1
-        return (0...(Sudoku.cellCount / 2)).map { index in
+        return (0...(Sudoku.gridSize / 2)).map { index in
             let cell: Index = (index / Sudoku.size, index % Sudoku.size)
             let mirror: Index = (last - cell.row, last - cell.col)
             return cell == mirror ? [cell] : [cell, mirror]
@@ -93,7 +93,7 @@ public struct SudokuGenerator: Sendable {
 
     /// Returns a random complete, valid grid.
     private func randomFilledSudoku<R: RandomNumberGenerator>(using rng: inout R) -> Sudoku {
-        var grid = Sudoku(board: Array(repeating: Sudoku.empty, count: Sudoku.cellCount))!
+        var grid = Sudoku(grid: Array(repeating: Sudoku.empty, count: Sudoku.gridSize))!
         let filled = fillRandom(&grid, from: 0, using: &rng)
         assert(filled, "an empty grid always has a solution")
         return grid
@@ -102,7 +102,7 @@ public struct SudokuGenerator: Sendable {
     /// Fills the cells from `index` onward in row-major order, trying each
     /// cell's candidates in random order and backtracking on dead ends.
     private func fillRandom<R: RandomNumberGenerator>(_ grid: inout Sudoku, from index: Int, using rng: inout R) -> Bool {
-        guard index < Sudoku.cellCount else { return true }
+        guard index < Sudoku.gridSize else { return true }
         let row = index / Sudoku.size, col = index % Sudoku.size
 
         for digit in grid.candidates(atRow: row, col: col).shuffled(using: &rng) {

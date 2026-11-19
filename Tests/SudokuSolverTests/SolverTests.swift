@@ -3,7 +3,7 @@ import Testing
 
 struct SolverTests {
     func sudoku(_ string: String) throws -> Sudoku {
-        try #require(Sudoku(board: string.compactMap(\.wholeNumberValue)))
+        try #require(Sudoku(grid: string.compactMap(\.wholeNumberValue)))
     }
 
     @Test func solvesEasyPuzzle() throws {
@@ -25,8 +25,8 @@ struct SolverTests {
     @Test func keepsGivens() throws {
         let puzzle = try sudoku("800000000003600000070090200050007000000045700000100030001000068008500010090000400")
         let solved = try #require(DFSSolver().solve(puzzle))
-        for i in puzzle.board.indices where puzzle.board[i] != 0 {
-            #expect(solved.board[i] == puzzle.board[i])
+        for i in puzzle.grid.indices where puzzle.grid[i] != 0 {
+            #expect(solved.grid[i] == puzzle.grid[i])
         }
     }
 
@@ -77,7 +77,7 @@ struct SolverTests {
     /// Every empty cell must be filled once, so at least `empty + 1` positions are visited.
     @Test func positionsAreAtLeastEmptyCellsPlusOne() throws {
         let puzzle = try sudoku("800000000003600000070090200050007000000045700000100030001000068008500010090000400")
-        let empty = puzzle.board.filter { $0 == 0 }.count
+        let empty = puzzle.grid.filter { $0 == 0 }.count
         let result = DFSSolver().solveCountingPositions(puzzle)
         #expect(result.solution != nil)
         #expect(result.positions > empty + 1)   // this hard puzzle needs backtracking
@@ -119,9 +119,9 @@ struct SolverTests {
     /// Blanks cells (0, 3), (0, 4), (3, 3), (3, 4) of a solved grid. They hold
     /// 6 7 / 7 6, so swapping the pairs gives a second valid grid.
     @Test func deadlyRectangleHasTwoSolutions() throws {
-        var cells = try sudoku("534678912672195348198342567859761423426853791713924856961537284287419635345286179").board
+        var cells = try sudoku("534678912672195348198342567859761423426853791713924856961537284287419635345286179").grid
         for i in [3, 4, 30, 31] { cells[i] = 0 }
-        let puzzle = try #require(Sudoku(board: cells))
+        let puzzle = try #require(Sudoku(grid: cells))
         #expect(DFSSolver().countSolutions(puzzle) == 2)
         #expect(DFSSolver().countSolutions(puzzle, limit: 10) == 2)
     }

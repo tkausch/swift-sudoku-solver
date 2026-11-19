@@ -15,14 +15,14 @@ struct SudokuParserTests {
         let spaced = puzzle.map { String($0) }.joined(separator: " ")
         let sudoku = try SudokuParser.parse(spaced)
         let expected = try SudokuParser.parse(puzzle)
-        #expect(sudoku.board == expected.board)
+        #expect(sudoku.grid == expected.grid)
     }
 
     @Test func treatsZeroAndDotAsEmpty() throws {
         let withZeros = puzzle.replacingOccurrences(of: ".", with: "0")
         let sudoku = try SudokuParser.parse(withZeros)
         let expected = try SudokuParser.parse(puzzle)
-        #expect(sudoku.board == expected.board)
+        #expect(sudoku.grid == expected.grid)
     }
 
     @Test func rejectsWrongLength() {
@@ -33,12 +33,12 @@ struct SudokuParserTests {
 
     @Test func rejectsInvalidCharacter() {
         #expect(throws: SudokuError.invalidCharacter("x")) {
-            try SudokuParser.parse(String(repeating: "x", count: Sudoku.cellCount))
+            try SudokuParser.parse(String(repeating: "x", count: Sudoku.gridSize))
         }
     }
 
     @Test func rejectsConflictingDigits() {
-        var cells = Array(repeating: "0", count: Sudoku.cellCount)
+        var cells = Array(repeating: "0", count: Sudoku.gridSize)
         cells[0] = "5"
         cells[8] = "5"
         #expect(throws: SudokuError.conflictingDigits) {

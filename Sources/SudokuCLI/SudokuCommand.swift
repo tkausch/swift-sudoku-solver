@@ -71,7 +71,7 @@ struct SudokuCommand: ParsableCommand {
         let puzzle: Sudoku
         if generate {
             puzzle = SudokuGenerator().generateEasy(minimumClues: clues ?? Self.defaultMinimumClues)
-            let clueCount = puzzle.board.filter { $0 != 0 }.count
+            let clueCount = puzzle.board.filter { $0 != Sudoku.empty }.count
             print("Generated easy puzzle with \(clueCount) clues:")
             print(SudokuParser.string(for: puzzle) + "\n")
         } else if let cells {

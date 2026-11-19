@@ -28,3 +28,18 @@ public protocol SolvableSudoku {
     ///   digit fits.
     func candidates(atRow row: Int, col: Int) -> [Int]
 }
+
+extension SolvableSudoku {
+    /// The value of an empty cell (`0`).
+    public static var empty: Int { 0 }
+
+    /// Returns whether a cell is empty.
+    ///
+    /// - Parameters:
+    ///   - row: The row, `0..<size`.
+    ///   - col: The column, `0..<size`.
+    /// - Returns: `true` if the cell holds ``empty``.
+    public func isEmpty(atRow row: Int, col: Int) -> Bool {
+        self[row, col] == Self.empty
+    }
+}

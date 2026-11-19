@@ -87,13 +87,13 @@ public struct SudokuGenerator: Sendable {
     /// Returns a copy of `sudoku` with the given cells emptied.
     private func emptying(_ cells: [Index], in sudoku: Sudoku) -> Sudoku {
         var copy = sudoku
-        for cell in cells { copy[cell.row, cell.col] = 0 }
+        for cell in cells { copy[cell.row, cell.col] = Sudoku.empty }
         return copy
     }
 
     /// Returns a random complete, valid grid.
     private func randomFilledSudoku<R: RandomNumberGenerator>(using rng: inout R) -> Sudoku {
-        var grid = Sudoku(board: Array(repeating: 0, count: Sudoku.cellCount))!
+        var grid = Sudoku(board: Array(repeating: Sudoku.empty, count: Sudoku.cellCount))!
         let filled = fillRandom(&grid, from: 0, using: &rng)
         assert(filled, "an empty grid always has a solution")
         return grid
@@ -109,7 +109,7 @@ public struct SudokuGenerator: Sendable {
             grid[row, col] = digit
             if fillRandom(&grid, from: index + 1, using: &rng) { return true }
         }
-        grid[row, col] = 0
+        grid[row, col] = Sudoku.empty
         return false
     }
 }

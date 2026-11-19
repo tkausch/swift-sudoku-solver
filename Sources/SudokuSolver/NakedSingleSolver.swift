@@ -54,7 +54,7 @@ public struct NakedSingleSolver<Puzzle: SolvableSudoku>: SudokuSolver, Sendable 
             var foundEmpty = false
             var placed = false
             for row in 0..<Puzzle.size {
-                for col in 0..<Puzzle.size where sudoku[row, col] == 0 {
+                for col in 0..<Puzzle.size where sudoku.isEmpty(atRow: row, col: col) {
                     foundEmpty = true
                     let candidates = sudoku.candidates(atRow: row, col: col)
                     if candidates.isEmpty { return .contradiction }

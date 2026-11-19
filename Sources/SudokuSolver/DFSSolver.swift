@@ -91,7 +91,7 @@ public struct DFSSolver<Puzzle: SolvableSudoku>: SudokuSolver, Sendable {
             sudoku[row, col] = digit
             if search(&sudoku, positions: &positions) { return true }
         }
-        sudoku[row, col] = 0   // backtrack
+        sudoku[row, col] = Puzzle.empty   // backtrack
         return false
     }
 
@@ -107,7 +107,7 @@ public struct DFSSolver<Puzzle: SolvableSudoku>: SudokuSolver, Sendable {
             countSolutions(&sudoku, limit: limit, count: &count)
             if count >= limit { break }
         }
-        sudoku[row, col] = 0   // backtrack
+        sudoku[row, col] = Puzzle.empty   // backtrack
     }
 
     /// Returns the empty cell with the fewest candidates, or `nil` if every cell is filled.
@@ -116,7 +116,7 @@ public struct DFSSolver<Puzzle: SolvableSudoku>: SudokuSolver, Sendable {
         var best: (row: Int, col: Int, candidates: [Int])?
 
         for row in 0..<Puzzle.size {
-            for col in 0..<Puzzle.size where sudoku[row, col] == 0 {
+            for col in 0..<Puzzle.size where sudoku.isEmpty(atRow: row, col: col) {
                 let candidates = sudoku.candidates(atRow: row, col: col)
                 if candidates.count <= 1 { return (row, col, candidates) }
                 if best == nil || candidates.count < best!.candidates.count {

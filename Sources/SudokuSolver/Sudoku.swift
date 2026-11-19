@@ -7,7 +7,7 @@
 /// every instance starts out valid:
 ///
 /// ```swift
-/// let cells = Array(repeating: 0, count: Sudoku.cellCount)
+/// let cells = Array(repeating: Sudoku.empty, count: Sudoku.cellCount)
 /// var sudoku = Sudoku(board: cells)!
 /// sudoku[0, 0] = 5
 /// print(sudoku.candidates(atRow: 0, col: 1))   // [1, 2, 3, 4, 6, 7, 8, 9]
@@ -90,11 +90,11 @@ public struct Sudoku: Equatable, Sendable, CustomStringConvertible {
         }
     }
 
-    /// Whether every cell is filled, i.e. no cell is `0`.
+    /// Whether every cell is filled, i.e. no cell is ``empty``.
     ///
     /// This doesn't check validity: combine it with ``isValidSudoku()`` to tell
     /// whether the grid is solved.
-    public var isComplete: Bool { !board.contains(0) }
+    public var isComplete: Bool { !board.contains(Self.empty) }
 
     /// The grid as text, one row per line.
     ///
@@ -118,7 +118,7 @@ public struct Sudoku: Equatable, Sendable, CustomStringConvertible {
             for col in 0..<size {
                 if col > 0 && col % boxSize == 0 { line += "| " }
                 let v = self[row, col]
-                line += (v == 0 ? "." : String(v)) + " "
+                line += (v == Self.empty ? "." : String(v)) + " "
             }
             lines.append(String(line.dropLast()))
         }
@@ -176,7 +176,7 @@ public struct Sudoku: Equatable, Sendable, CustomStringConvertible {
 
     /// Returns `true` if the non-empty digits of a unit (row, column or box) are unique.
     private static func isValidUnit<Unit: Collection<Int>>(_ unit: Unit) -> Bool {
-        let digits = unit.filter { $0 != 0 }
+        let digits = unit.filter { $0 != empty }
         return Set(digits).count == digits.count
     }
 }
@@ -196,7 +196,7 @@ extension Sudoku: SolvableSudoku {
     /// - Returns: The possible digits in ascending order. Empty if the cell is
     ///   already filled, or if no digit fits (a dead end).
     public func candidates(atRow row: Int, col: Int) -> [Int] {
-        guard self[row, col] == 0 else { return [] }
+        guard isEmpty(atRow: row, col: col) else { return [] }
 
         let rowNums = rowUnit(atRow: row)
         let colNums = colUnit(atCol: col)

@@ -37,7 +37,7 @@ public struct SudokuParser {
         board.reserveCapacity(Sudoku.cellCount)
         for ch in input where !ch.isWhitespace {
             switch ch {
-            case ".": board.append(0)
+            case ".": board.append(Sudoku.empty)
             case "0"..."9": board.append(Int(String(ch))!)
             default: throw SudokuError.invalidCharacter(ch)
             }
@@ -59,6 +59,6 @@ public struct SudokuParser {
     /// - Returns: ``Sudoku/cellCount`` characters in row-major order: a digit
     ///   `1...Sudoku.size` for a clue, `.` for an empty cell.
     public static func string(for sudoku: Sudoku) -> String {
-        sudoku.board.map { $0 == 0 ? "." : String($0) }.joined()
+        sudoku.board.map { $0 == Sudoku.empty ? "." : String($0) }.joined()
     }
 }

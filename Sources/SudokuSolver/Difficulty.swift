@@ -6,7 +6,7 @@ public enum Difficulty: String, CaseIterable, Identifiable, Sendable {
     public var id: Self { self }
     public var title: String { rawValue.capitalized }
 
-    var minimumClues: Int {
+    public var minimumClues: Int {
         switch self {
         case .easy: 42
         case .medium: 34

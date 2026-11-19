@@ -6,8 +6,9 @@
 /// ```swift
 /// var game = SudokuGame(puzzle: SudokuGenerator().generate(.medium))
 /// game.isGiven(atRow: 0, col: 0)       // true if (0, 0) is a clue
-/// game.set(4, atRow: 0, col: 1)        // false if (0, 1) is a given
-/// game.set(Sudoku.empty, atRow: 0, col: 1)   // clears the entry
+/// game.move(4, atRow: 0, col: 1)       // false if (0, 1) is a given
+/// game.move(Sudoku.empty, atRow: 0, col: 1)   // clears the entry
+/// game.undo()                          // puts the 4 back
 /// game.isSolved
 /// ```
 ///
@@ -20,6 +21,16 @@ public struct SudokuGame: Equatable, Sendable {
 
     /// The givens plus the player's entries.
     public private(set) var board: Sudoku
+
+    /// One change to a cell, kept so it can be undone.
+    private struct Move: Equatable, Sendable {
+        let row: Int
+        let col: Int
+        let previous: Int
+    }
+
+    /// Changes made by ``move(_:atRow:col:)``, oldest first.
+    private var history: [Move] = []
 
     /// Starts a game with no entries yet.
     ///
@@ -41,6 +52,9 @@ public struct SudokuGame: Equatable, Sendable {
 
     /// Enters or clears a digit in a cell that isn't a given.
     ///
+    /// Each change can be taken back with ``undo()``. Writing the digit a cell
+    /// already holds changes nothing and isn't recorded.
+    ///
     /// - Precondition: `row` and `col` are in `0..<Sudoku.size`, and `digit`
     ///   is in ``Sudoku/allowedValues``.
     ///
@@ -50,9 +64,27 @@ public struct SudokuGame: Equatable, Sendable {
     ///   - col: The column, `0..<Sudoku.size`.
     /// - Returns: `false` if the cell is a given and was left unchanged.
     @discardableResult
-    public mutating func set(_ digit: Int, atRow row: Int, col: Int) -> Bool {
+    public mutating func move(_ digit: Int, atRow row: Int, col: Int) -> Bool {
         guard !isGiven(atRow: row, col: col) else { return false }
+        let previous = board[row, col]
+        guard digit != previous else { return true }
         board[row, col] = digit
+        history.append(Move(row: row, col: col, previous: previous))
+        return true
+    }
+
+    /// Whether there is a change that ``undo()`` can take back.
+    public var canUndo: Bool { !history.isEmpty }
+
+    /// Takes back the most recent change made with ``move(_:atRow:col:)``.
+    ///
+    /// Call it repeatedly to step back to the original puzzle.
+    ///
+    /// - Returns: `false` if there was nothing to undo.
+    @discardableResult
+    public mutating func undo() -> Bool {
+        guard let move = history.popLast() else { return false }
+        board[move.row, move.col] = move.previous
         return true
     }
 

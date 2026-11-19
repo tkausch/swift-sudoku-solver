@@ -7,7 +7,7 @@ struct SudokuCommand: ParsableCommand {
         commandName: "sudoku",
         abstract: "Solve or generate a 9x9 Sudoku.",
         discussion: """
-            Without a puzzle, one of \(SudokuPuzzles.all.count) built-in puzzles is picked at random.
+            Without a puzzle, one of \(ClassicPuzzles.all.count) built-in puzzles is picked at random.
             With --generate, a new easy puzzle is generated and solved instead.
             """
     )
@@ -49,8 +49,8 @@ struct SudokuCommand: ParsableCommand {
         if let clues, !Self.minimumClueRange.contains(clues) {
             throw ValidationError("--clues must be between \(Self.minimumClueRange.lowerBound) and \(Self.minimumClueRange.upperBound).")
         }
-        if let sample, !SudokuPuzzles.all.indices.contains(sample - 1) {
-            throw ValidationError("--sample must be between 1 and \(SudokuPuzzles.all.count).")
+        if let sample, !ClassicPuzzles.all.indices.contains(sample - 1) {
+            throw ValidationError("--sample must be between 1 and \(ClassicPuzzles.all.count).")
         }
     }
 
@@ -62,7 +62,7 @@ struct SudokuCommand: ParsableCommand {
     
     func run() throws {
         if list {
-            for (i, sample) in SudokuPuzzles.all.enumerated() {
+            for (i, sample) in ClassicPuzzles.all.enumerated() {
                 print("\(i + 1). \(sample.name)")
             }
             return
@@ -77,7 +77,7 @@ struct SudokuCommand: ParsableCommand {
         } else if let cells {
             puzzle = try SudokuParser.parse(cells)
         } else {
-            let sample = sample.map { SudokuPuzzles.all[$0 - 1] } ?? SudokuPuzzles.all.randomElement()!
+            let sample = sample.map { ClassicPuzzles.all[$0 - 1] } ?? ClassicPuzzles.all.randomElement()!
             print("Puzzle: \(sample.name)\n")
             puzzle = try SudokuParser.parse(sample.cells)
         }

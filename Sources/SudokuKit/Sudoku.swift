@@ -96,6 +96,21 @@ public struct Sudoku: Equatable, Sendable, CustomStringConvertible {
     /// whether the grid is solved.
     public var isComplete: Bool { !grid.contains(Self.empty) }
 
+    /// Returns whether a cell's digit also appears elsewhere in its row, column or box.
+    ///
+    /// Useful for highlighting mistakes while a puzzle is being played.
+    ///
+    /// - Parameters:
+    ///   - row: The row, `0..<size`.
+    ///   - col: The column, `0..<size`.
+    /// - Returns: `false` for an empty cell, or if the digit is unique in all three units.
+    public func hasConflict(atRow row: Int, col: Int) -> Bool {
+        let digit = self[row, col]
+        guard digit != Self.empty else { return false }
+        return [rowUnit(atRow: row), colUnit(atCol: col), boxUnit(atRow: row, col: col)]
+            .contains { unit in unit.lazy.filter { $0 == digit }.count > 1 }
+    }
+
     /// The grid as text, one row per line.
     ///
     /// Empty cells are shown as `.`, and boxes are separated by `|` and `-+-` lines:

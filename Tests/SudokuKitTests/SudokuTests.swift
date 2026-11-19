@@ -111,6 +111,44 @@ struct SudokuTests {
         #expect(sudoku.candidates(atRow: 4, col: 4) == Array(1...9))
     }
 
+    // MARK: - hasConflict
+
+    @Test func validPuzzleHasNoConflicts() throws {
+        let sudoku = try #require(Sudoku(grid: board(puzzle)))
+        for row in 0..<Sudoku.size {
+            for col in 0..<Sudoku.size {
+                #expect(!sudoku.hasConflict(atRow: row, col: col))
+            }
+        }
+    }
+
+    @Test func rowConflictMarksBothCells() throws {
+        var sudoku = try #require(Sudoku(grid: board(puzzle)))
+        sudoku[0, 2] = 5   // 5 is already at (0, 0)
+        #expect(sudoku.hasConflict(atRow: 0, col: 2))
+        #expect(sudoku.hasConflict(atRow: 0, col: 0))
+        #expect(!sudoku.hasConflict(atRow: 0, col: 1))
+    }
+
+    @Test func columnConflict() throws {
+        var sudoku = try #require(Sudoku(grid: board(puzzle)))
+        sudoku[3, 1] = 9   // 9 is already at (2, 1); not in row 3 or the box
+        #expect(sudoku.hasConflict(atRow: 3, col: 1))
+        #expect(sudoku.hasConflict(atRow: 2, col: 1))
+    }
+
+    @Test func boxConflict() throws {
+        var sudoku = try #require(Sudoku(grid: board(puzzle)))
+        sudoku[1, 1] = 8   // 8 is already at (2, 2); not in row 1 or column 1
+        #expect(sudoku.hasConflict(atRow: 1, col: 1))
+        #expect(sudoku.hasConflict(atRow: 2, col: 2))
+    }
+
+    @Test func emptyCellHasNoConflict() throws {
+        let sudoku = try #require(Sudoku(grid: board(puzzle)))
+        #expect(!sudoku.hasConflict(atRow: 0, col: 2))
+    }
+
     @Test func candidatesMatchSolution() throws {
         let sudoku = try #require(Sudoku(grid: board(puzzle)))
         let solved = try #require(Sudoku(grid: board(solution)))

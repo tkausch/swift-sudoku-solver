@@ -29,12 +29,15 @@ backtracking search, constraint checking and puzzle generation in modern Swift.
   your own random number generator.
 - **Extensible:** solvers work with any grid that adopts `SolvableSudoku`, for example
   a 4×4 variant, and new algorithms can adopt the `SudokuSolver` protocol.
-- **12 famous puzzles built in,** from the Wikipedia example to AI Escargot and Easter Monster.
+- **Play in SwiftUI:** `SudokuGame` tracks givens, entries and undo, and the optional
+  `SudokuUI` product adds a ready-made board and number pad.
+- **8 famous puzzles built in,** from the Wikipedia example to AI Escargot and Easter Monster.
 
 ## Requirements
 
-Swift 6.0+, macOS 13+ / iOS 16+. The library has no dependencies; the command-line
-tool uses [Swift Argument Parser](https://github.com/apple/swift-argument-parser).
+Swift 6.0+, macOS 13+ / iOS 16+. `SudokuKit` has no dependencies and also builds on
+Linux; `SudokuUI` needs SwiftUI. The command-line tool uses
+[Swift Argument Parser](https://github.com/apple/swift-argument-parser).
 Tests run on Linux with Swift 6.0 in GitHub Actions.
 
 ## Installation
@@ -48,6 +51,7 @@ dependencies: [
 targets: [
     .target(name: "MyApp", dependencies: [
         .product(name: "SudokuKit", package: "swift-sudoku-solver"),
+        .product(name: "SudokuUI", package: "swift-sudoku-solver"),   // optional: SwiftUI views
     ]),
 ]
 ```
@@ -104,12 +108,47 @@ let easy = SudokuGenerator().generate()             // pass `using: &rng` to mak
 
 | Type | Purpose |
 |---|---|
-| `Sudoku` | 9×9 grid; creation fails for invalid input. `subscript(row:col:)`, `candidates(atRow:col:)`, `isValidSudoku()`, `isComplete`. |
+| `Sudoku` | 9×9 grid; creation fails for invalid input. `subscript(row:col:)`, `candidates(atRow:col:)`, `hasConflict(atRow:col:)`, `isValidSudoku()`, `isComplete`. |
 | `SolvableSudoku` | What a solver needs from a grid. Adopt it to solve other sizes (e.g. 4×4). |
 | `SudokuSolver` | Protocol for solving algorithms: `solve(_:) -> Puzzle?`. |
 | `DFSSolver` | Backtracking solver; also `solveCountingPositions(_:)` and `countSolutions(_:limit:)`. |
 | `NakedSingleSolver` | Fills only cells with exactly one candidate, never guesses. Reports `solved`, `stuck` or `contradiction`. |
 | `SudokuGenerator` | `generate(minimumClues:)`, `generate(_:)` with a `SudokuDifficulty`: puzzles solvable with naked singles alone. |
+
+## SwiftUI
+
+`SudokuUI` adds a board and a number pad that work with a `SudokuGame`:
+
+```swift
+import SwiftUI
+import SudokuKit
+import SudokuUI
+
+struct GameScreen: View {
+    @State private var game = SudokuGame(puzzle: SudokuGenerator().generate(.medium))
+    @State private var selection: SudokuCell?
+
+    var body: some View {
+        VStack(spacing: 16) {
+            SudokuBoardView(game: game, selection: $selection)
+            SudokuNumberPad(game: $game, selection: selection)
+        }
+        .padding()
+    }
+}
+```
+
+<p align="center">
+  <img src="assets/sudoku-board.png" alt="SudokuBoardView: givens in bold, a correct entry in blue, conflicting 5s in red, and the selected cell's row, column and box highlighted" width="360">
+</p>
+
+| Type | Purpose |
+|---|---|
+| `SudokuBoardView` | Square 9×9 board. Givens bold, entries in the tint colour, conflicts red; highlights the selected cell's row, column, box and matching digits. Tap to select. |
+| `SudokuNumberPad` | Digits 1–9, Erase and Undo for the selected cell. Disabled for givens. |
+| `SudokuCell` | A row and column, used as the selection. |
+
+The views follow the app's tint colour and dark mode, and every cell has a VoiceOver label.
 
 ## How it works
 

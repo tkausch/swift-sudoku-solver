@@ -6,6 +6,7 @@ let package = Package(
     platforms: [.macOS(.v13), .iOS(.v16)],
     products: [
         .library(name: "SudokuKit", targets: ["SudokuKit"]),
+        .library(name: "SudokuUI", targets: ["SudokuUI"]),
         .executable(name: "sudoku", targets: ["SudokuCLI"]),
     ],
     dependencies: [
@@ -13,6 +14,12 @@ let package = Package(
     ],
     targets: [
         .target(name: "SudokuKit"),
+        // SwiftUI views. Every file is wrapped in `#if canImport(SwiftUI)`,
+        // so on Linux this target builds as an empty module.
+        .target(
+            name: "SudokuUI",
+            dependencies: ["SudokuKit"]
+        ),
         .executableTarget(
             name: "SudokuCLI",
             dependencies: [
@@ -23,6 +30,10 @@ let package = Package(
         .testTarget(
             name: "SudokuKitTests",
             dependencies: ["SudokuKit"]
+        ),
+        .testTarget(
+            name: "SudokuUITests",
+            dependencies: ["SudokuUI", "SudokuKit"]
         ),
     ]
 )

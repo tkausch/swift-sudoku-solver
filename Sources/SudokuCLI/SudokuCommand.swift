@@ -1,5 +1,5 @@
 import ArgumentParser
-import SudokuSolver
+import SudokuKit
 
 @main
 struct SudokuCommand: ParsableCommand {

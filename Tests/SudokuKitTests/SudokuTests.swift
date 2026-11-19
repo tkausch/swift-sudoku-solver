@@ -1,5 +1,5 @@
 import Testing
-@testable import SudokuSolver
+@testable import SudokuKit
 
 struct SudokuTests {
     let puzzle = "530070000600195000098000060800060003400803001700020006060000280000419005000080079"

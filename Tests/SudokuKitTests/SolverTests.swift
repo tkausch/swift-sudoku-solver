@@ -1,5 +1,5 @@
 import Testing
-@testable import SudokuSolver
+@testable import SudokuKit
 
 struct SolverTests {
     func sudoku(_ string: String) throws -> Sudoku {

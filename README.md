@@ -47,7 +47,7 @@ dependencies: [
 ],
 targets: [
     .target(name: "MyApp", dependencies: [
-        .product(name: "SudokuSolver", package: "swift-sudoku-solver"),
+        .product(name: "SudokuKit", package: "swift-sudoku-solver"),
     ]),
 ]
 ```
@@ -94,7 +94,7 @@ Solved in 0.2 ms:
 ## Library
 
 ```swift
-import SudokuSolver
+import SudokuKit
 
 let puzzle = Sudoku(grid: cells)!                  // 81 values, 0 = empty
 let solution = DFSSolver().solve(puzzle)            // nil if unsolvable

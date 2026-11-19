@@ -1,5 +1,5 @@
 import Testing
-@testable import SudokuSolver
+@testable import SudokuKit
 
 /// A small seeded random number generator, so generated puzzles are reproducible.
 struct SplitMix64: RandomNumberGenerator {

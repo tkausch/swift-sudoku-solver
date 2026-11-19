@@ -2,27 +2,27 @@
 import PackageDescription
 
 let package = Package(
-    name: "SudokuSolver",
+    name: "SudokuKit",
     platforms: [.macOS(.v13), .iOS(.v16)],
     products: [
-        .library(name: "SudokuSolver", targets: ["SudokuSolver"]),
+        .library(name: "SudokuKit", targets: ["SudokuKit"]),
         .executable(name: "sudoku", targets: ["SudokuCLI"]),
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.5.0"),
     ],
     targets: [
-        .target(name: "SudokuSolver"),
+        .target(name: "SudokuKit"),
         .executableTarget(
             name: "SudokuCLI",
             dependencies: [
-                "SudokuSolver",
+                "SudokuKit",
                 .product(name: "ArgumentParser", package: "swift-argument-parser"),
             ]
         ),
         .testTarget(
-            name: "SudokuSolverTests",
-            dependencies: ["SudokuSolver"]
+            name: "SudokuKitTests",
+            dependencies: ["SudokuKit"]
         ),
     ]
 )

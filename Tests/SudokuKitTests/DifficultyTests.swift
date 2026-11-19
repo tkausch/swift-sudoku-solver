@@ -1,5 +1,5 @@
 import Testing
-@testable import SudokuSolver
+@testable import SudokuKit
 
 struct DifficultyTests {
     func clues(_ sudoku: Sudoku) -> Int {

@@ -46,10 +46,10 @@ struct SudokuBoardViewTests {
 
     @Test func cellsShareUnits() {
         let cell = SudokuCell(row: 4, col: 4)
-        #expect(cell.sharesUnit(with: SudokuCell(row: 4, col: 0), boxSize: 3))   // row
-        #expect(cell.sharesUnit(with: SudokuCell(row: 0, col: 4), boxSize: 3))   // column
-        #expect(cell.sharesUnit(with: SudokuCell(row: 3, col: 5), boxSize: 3))   // box
-        #expect(!cell.sharesUnit(with: SudokuCell(row: 0, col: 0), boxSize: 3))
+        #expect(cell.sharesUnit(with: SudokuCell(row: 4, col: 0)))   // row
+        #expect(cell.sharesUnit(with: SudokuCell(row: 0, col: 4)))   // column
+        #expect(cell.sharesUnit(with: SudokuCell(row: 3, col: 5)))   // box
+        #expect(!cell.sharesUnit(with: SudokuCell(row: 0, col: 0)))
     }
 }
 #endif

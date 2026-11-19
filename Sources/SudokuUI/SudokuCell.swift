@@ -1,5 +1,7 @@
 #if canImport(SwiftUI)
 
+import SudokuKit
+
 /// The position of one cell on the board, used as the selection in ``SudokuBoardView``.
 public struct SudokuCell: Hashable, Sendable {
     /// The row, `0..<Sudoku.size`.
@@ -14,8 +16,9 @@ public struct SudokuCell: Hashable, Sendable {
     }
 
     /// Whether the other cell is in the same row, column or 3×3 box.
-    func sharesUnit(with other: SudokuCell, boxSize: Int) -> Bool {
-        row == other.row
+    func sharesUnit(with other: SudokuCell) -> Bool {
+        let boxSize = Sudoku.boxSize
+        return row == other.row
             || col == other.col
             || (row / boxSize == other.row / boxSize && col / boxSize == other.col / boxSize)
     }

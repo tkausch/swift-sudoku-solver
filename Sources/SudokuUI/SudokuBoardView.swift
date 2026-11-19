@@ -105,7 +105,7 @@ public struct SudokuBoardView: View {
 
         let selectedDigit = game.board[selection.row, selection.col]
         if digit != Sudoku.empty && digit == selectedDigit { return AnyShapeStyle(.tint.opacity(0.2)) }
-        if cell.sharesUnit(with: selection, boxSize: Sudoku.boxSize) {
+        if cell.sharesUnit(with: selection) {
             return AnyShapeStyle(Color.secondary.opacity(0.12))
         }
         return AnyShapeStyle(Color.clear)

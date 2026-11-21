@@ -32,6 +32,9 @@ public struct SudokuGame: Equatable, Sendable {
     /// Changes made by ``set(_:atRow:col:)``, oldest first.
     private var history: [Move] = []
 
+    /// ``solution`` once it has been computed, `nil` until then.
+    var _solution: Sudoku?
+
     /// Starts a game with no entries yet.
     ///
     /// - Parameter puzzle: The puzzle to play. Its filled cells become the givens.
@@ -91,5 +94,44 @@ public struct SudokuGame: Equatable, Sendable {
     /// Whether every cell is filled and no row, column or box repeats a digit.
     public var isSolved: Bool {
         board.isComplete && board.isValidSudoku()
+    }
+
+    /// The puzzle's solution.
+    ///
+    /// The first access solves ``puzzle`` and stores the result; later accesses
+    /// return it. Copies made afterwards keep it.
+    ///
+    /// - Precondition: ``puzzle`` has a solution. Puzzles from ``SudokuGenerator``
+    ///   always do; check others with ``DFSSolver/countSolutions(_:limit:)``.
+    public var solution: Sudoku {
+        mutating get {
+            if let _solution { return _solution }
+            guard let solution = DFSSolver().solve(puzzle) else {
+                preconditionFailure("The puzzle has no solution")
+            }
+            _solution = solution
+            return solution
+        }
+    }
+
+    /// The digit that belongs in a cell.
+    ///
+    /// - Parameters:
+    ///   - row: The row, `0..<Sudoku.size`.
+    ///   - col: The column, `0..<Sudoku.size`.
+    /// - Precondition: ``puzzle`` has a solution, as for ``solution``.
+    /// - Returns: The cell's digit in ``solution``.
+    public mutating func hint(forRow row: Int, col: Int) -> Int {
+        solution[row, col]
+    }
+}
+
+// MARK: - Equatable
+
+extension SudokuGame {
+    /// Games are equal if they have the same puzzle, board and undo history.
+    /// Whether ``solution`` has been computed yet doesn't matter.
+    public static func == (lhs: SudokuGame, rhs: SudokuGame) -> Bool {
+        lhs.puzzle == rhs.puzzle && lhs.board == rhs.board
     }
 }

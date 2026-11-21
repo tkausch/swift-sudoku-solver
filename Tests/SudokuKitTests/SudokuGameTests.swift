@@ -141,4 +141,29 @@ struct SudokuGameTests {
         #expect(!game.isSolved)
         #expect(game.board[8, 6] == Sudoku.empty)   // last empty cell filled
     }
+
+    // MARK: Solution
+
+    @Test func solutionIsComputedOnFirstAccessOnly() throws {
+        var game = SudokuGame(puzzle: puzzle)
+        #expect(game._solution == nil)
+        let solution = game.solution
+        #expect(game._solution == solution)
+        #expect(solution == DFSSolver().solve(puzzle))
+        #expect(game.hint(forRow: 0, col: 2) == solution[0, 2])
+    }
+
+    @Test func storedSolutionSurvivesMovesAndCopies() throws {
+        var game = SudokuGame(puzzle: puzzle)
+        _ = game.solution
+        game.set(4, atRow: 0, col: 2)               // moves don't affect the solution
+        let copy = game
+        #expect(copy._solution != nil)
+    }
+
+    @Test func storedSolutionDoesNotAffectEquality() {
+        var solved = SudokuGame(puzzle: puzzle)
+        _ = solved.solution
+        #expect(solved == SudokuGame(puzzle: puzzle))
+    }
 }

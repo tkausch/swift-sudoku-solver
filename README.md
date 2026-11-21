@@ -145,7 +145,7 @@ struct GameScreen: View {
 | Type | Purpose |
 |---|---|
 | `SudokuBoardView` | Square 9×9 board. Givens bold, entries in the tint colour, conflicts red; highlights the selected cell's row, column, box and matching digits. Tap to select. |
-| `SudokuNumberPad` | Digits 1–9, Erase and Undo for the selected cell. Disabled for givens. |
+| `SudokuNumberPad` | Digits 1–9, Erase, Undo and Hint for the selected cell. Hint fills in the digit from the solution. Disabled for givens. |
 | `SudokuCell` | A row and column, used as the selection. |
 
 The views follow the app's tint colour and dark mode, and every cell has a VoiceOver label.

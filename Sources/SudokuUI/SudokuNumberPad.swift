@@ -3,10 +3,13 @@ import SwiftUI
 import SudokuKit
 
 /// Buttons for entering digits into the selected cell of a ``SudokuKit/SudokuGame``,
-/// plus Erase and Undo.
+/// plus Erase, Undo and Hint.
 ///
-/// Digits and Erase are disabled while no cell is selected or the selected cell is a given.
-/// Undo is disabled when there is nothing to undo. See ``SudokuBoardView`` for a full example.
+/// Hint fills the selected cell with its digit from the puzzle's solution, using
+/// ``SudokuKit/SudokuGame/hint(forRow:col:)``. Like any entry, it can be undone.
+///
+/// Digits, Erase and Hint are disabled while no cell is selected or the selected cell is
+/// a given. Undo is disabled when there is nothing to undo. See ``SudokuBoardView`` for a full example.
 public struct SudokuNumberPad: View {
     @Binding private var game: SudokuGame
     private let selection: SudokuCell?
@@ -53,6 +56,14 @@ public struct SudokuNumberPad: View {
                         .frame(maxWidth: .infinity, minHeight: 28)
                 }
                 .disabled(!game.canUndo)
+
+                Button {
+                    giveHint()
+                } label: {
+                    Label("Hint", systemImage: "lightbulb")
+                        .frame(maxWidth: .infinity, minHeight: 28)
+                }
+                .disabled(!canEdit)
             }
         }
         .buttonStyle(.bordered)
@@ -67,6 +78,12 @@ public struct SudokuNumberPad: View {
     private func enter(_ digit: Int) {
         guard let selection else { return }
         game.set(digit, atRow: selection.row, col: selection.col)
+    }
+
+    /// Fills the selected cell with its digit from the solution.
+    private func giveHint() {
+        guard let selection else { return }
+        enter(game.hint(forRow: selection.row, col: selection.col))
     }
 }
 

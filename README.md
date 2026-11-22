@@ -63,15 +63,17 @@ In Xcode, choose **File → Add Package Dependencies…** and enter the reposito
 ```sh
 swift build -c release
 .build/release/sudoku                    # solve a random built-in puzzle
-.build/release/sudoku --sample 12        # solve built-in puzzle 12 (see --list)
+.build/release/sudoku --sample 8         # solve built-in puzzle 8 (see --list)
 .build/release/sudoku 53..7....6..195....98....6.8...6...34..8.3..17...2...6.6....28....419..5....8..79
 .build/release/sudoku --generate         # generate an easy puzzle and solve it
 .build/release/sudoku -g --clues 30      # ... with at least 30 clues (default 36)
+.build/release/sudoku -g -d hard --seed 7 # ... a hard one, the same every time
 ```
 
 Puzzles are 81 cells row by row: digits 1-9, `0` or `.` for empty. The tool prints the
 grid, the board positions visited, the time and the solution. Run `sudoku --help` for
-all options. Invalid input exits with status 64, an unsolvable puzzle with status 1.
+all options. A puzzle you pass must have exactly one solution: invalid input and
+puzzles with several solutions exit with status 64, an unsolvable puzzle with status 1.
 
 A generated puzzle is also printed as a single line, so you can save it or pass it
 back to the solver:
@@ -114,6 +116,8 @@ let easy = SudokuGenerator().generate()             // pass `using: &rng` to mak
 | `DFSSolver` | Backtracking solver; also `solveCountingPositions(_:)` and `countSolutions(_:limit:)`. |
 | `NakedSingleSolver` | Fills only cells with exactly one candidate, never guesses. Reports `solved`, `stuck` or `contradiction`. |
 | `SudokuGenerator` | `generate(minimumClues:)`, `generate(_:)` with a `SudokuDifficulty`: puzzles solvable with naked singles alone. |
+| `SplitMix64` | Seeded random number generator: pass it as `using: &rng` for reproducible puzzles. |
+| `SudokuParser` | `parse(_:)` reads 81 characters; `parsePlayable(_:)` also requires exactly one solution. |
 
 ## SwiftUI
 

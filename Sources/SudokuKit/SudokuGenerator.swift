@@ -8,7 +8,7 @@
 /// Pass your own random number generator to get reproducible puzzles:
 ///
 /// ```swift
-/// var rng = SomeSeededGenerator(seed: 42)
+/// var rng = SplitMix64(seed: 42)
 /// let puzzle = SudokuGenerator().generate(using: &rng)
 /// ```
 public struct SudokuGenerator: Sendable {

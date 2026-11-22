@@ -32,6 +32,10 @@ let package = Package(
             dependencies: ["SudokuKit"]
         ),
         .testTarget(
+            name: "SudokuCLITests",
+            dependencies: ["SudokuCLI", "SudokuKit"]
+        ),
+        .testTarget(
             name: "SudokuUITests",
             dependencies: ["SudokuUI", "SudokuKit"]
         ),

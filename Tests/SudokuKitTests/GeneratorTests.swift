@@ -1,20 +1,6 @@
 import Testing
 @testable import SudokuKit
 
-/// A small seeded random number generator, so generated puzzles are reproducible.
-struct SplitMix64: RandomNumberGenerator {
-    private var state: UInt64
-    init(seed: UInt64) { state = seed }
-
-    mutating func next() -> UInt64 {
-        state &+= 0x9E37_79B9_7F4A_7C15
-        var z = state
-        z = (z ^ (z >> 30)) &* 0xBF58_476D_1CE4_E5B9
-        z = (z ^ (z >> 27)) &* 0x94D0_49BB_1331_11EB
-        return z ^ (z >> 31)
-    }
-}
-
 struct GeneratorTests {
     func easyPuzzle(seed: UInt64, minimumClues: Int = 36) -> Sudoku {
         var rng = SplitMix64(seed: seed)
@@ -78,5 +64,17 @@ struct GeneratorTests {
     @Test func systemRandomGeneratorWorks() {
         let puzzle = SudokuGenerator().generate()
         #expect(NakedSingleSolver().solve(puzzle) != nil)
+    }
+}
+
+struct SplitMix64Tests {
+    @Test func sameSeedGivesSameSequence() {
+        var a = SplitMix64(seed: 42), b = SplitMix64(seed: 42)
+        #expect((0..<10).map { _ in a.next() } == (0..<10).map { _ in b.next() })
+    }
+
+    @Test func differentSeedsGiveDifferentSequences() {
+        var a = SplitMix64(seed: 1), b = SplitMix64(seed: 2)
+        #expect(a.next() != b.next())
     }
 }

@@ -53,6 +53,25 @@ public struct SudokuParser {
         return sudoku
     }
 
+    /// Parses a puzzle from text and checks that it can be played: it has exactly one solution.
+    ///
+    /// Use this for puzzles typed in by a player. ``parse(_:)`` only checks the
+    /// format and the rules, so it accepts grids that have no solution or several.
+    ///
+    /// - Parameter input: The puzzle, in the format described for ``parse(_:)``.
+    /// - Returns: The parsed puzzle.
+    /// - Throws: Any error ``parse(_:)`` throws, ``SudokuError/noSolution`` if the
+    ///   puzzle can't be solved, or ``SudokuError/multipleSolutions`` if it has
+    ///   more than one solution.
+    public static func parsePlayable(_ input: String) throws -> Sudoku {
+        let sudoku = try parse(input)
+        switch DFSSolver().countSolutions(sudoku, limit: 2) {
+        case 0: throw SudokuError.noSolution
+        case 1: return sudoku
+        default: throw SudokuError.multipleSolutions
+        }
+    }
+
     /// Formats a puzzle as a single line of text.
     ///
     /// - Parameter sudoku: The puzzle to format.

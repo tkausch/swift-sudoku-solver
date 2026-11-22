@@ -167,3 +167,15 @@ struct SudokuGameTests {
         #expect(solved == SudokuGame(puzzle: puzzle))
     }
 }
+
+struct SudokuGameIdentityTests {
+    @Test func idDependsOnPuzzleOnly() throws {
+        let puzzle = try SudokuParser.parse(SudokuPuzzle.all[0].cells)
+        var game = SudokuGame(puzzle: puzzle)
+        let fresh = game
+        game.set(4, atRow: 0, col: 2)
+        #expect(game.id == fresh.id)
+        #expect(game != fresh)
+        #expect(game.id == SudokuPuzzle.all[0].cells)
+    }
+}

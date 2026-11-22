@@ -33,7 +33,7 @@ public struct SudokuGame: Equatable, Sendable {
     private var history: [Move] = []
 
     /// ``solution`` once it has been computed, `nil` until then.
-    var _solution: Sudoku?
+    private(set) var _solution: Sudoku?
 
     /// Starts a game with no entries yet.
     ///
@@ -126,11 +126,21 @@ public struct SudokuGame: Equatable, Sendable {
     }
 }
 
+// MARK: - Identifiable
+
+extension SudokuGame: Identifiable {
+    /// The puzzle as a single line of text, as ``SudokuParser/string(for:)`` writes it.
+    ///
+    /// Games of the same puzzle have the same `id`, whatever the player has entered.
+    /// `==` also compares the board.
+    public var id: String { SudokuParser.string(for: puzzle) }
+}
+
 // MARK: - Equatable
 
 extension SudokuGame {
-    /// Games are equal if they have the same puzzle, board and undo history.
-    /// Whether ``solution`` has been computed yet doesn't matter.
+    /// Games are equal if they have the same puzzle and board.
+    /// The undo history and whether ``solution`` has been computed yet don't matter.
     public static func == (lhs: SudokuGame, rhs: SudokuGame) -> Bool {
         lhs.puzzle == rhs.puzzle && lhs.board == rhs.board
     }

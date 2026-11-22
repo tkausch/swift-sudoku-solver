@@ -57,4 +57,28 @@ struct SudokuParserTests {
         let reparsed = try SudokuParser.parse(formatted)
         #expect(reparsed == sudoku)
     }
+
+    @Test func parsePlayableAcceptsUniquePuzzle() throws {
+        #expect(try SudokuParser.parsePlayable(puzzle) == SudokuParser.parse(puzzle))
+    }
+
+    @Test func parsePlayableRejectsPuzzleWithSeveralSolutions() {
+        #expect(throws: SudokuError.multipleSolutions) {
+            try SudokuParser.parsePlayable("12345678" + String(repeating: ".", count: 73))
+        }
+    }
+
+    /// Cell (0, 8) has no candidate: row 0 holds 1–8 and column 8 holds the 9.
+    @Test func parsePlayableRejectsPuzzleWithoutSolution() {
+        let cells = "12345678." + "........9" + String(repeating: ".", count: 63)
+        #expect(throws: SudokuError.noSolution) {
+            try SudokuParser.parsePlayable(cells)
+        }
+    }
+
+    @Test func parsePlayableReportsFormatErrors() {
+        #expect(throws: SudokuError.wrongLength(3)) {
+            try SudokuParser.parsePlayable("123")
+        }
+    }
 }

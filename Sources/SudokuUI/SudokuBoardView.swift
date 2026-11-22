@@ -49,7 +49,6 @@ public struct SudokuBoardView: View {
             let cellSide = side / CGFloat(Sudoku.size)
 
             ZStack {
-                Color.pastelYellow
                 VStack(spacing: 0) {
                     ForEach(0..<Sudoku.size, id: \.self) { row in
                         HStack(spacing: 0) {
@@ -139,29 +138,6 @@ private struct GridLines: Shape {
         }
         return path
     }
-}
-
-private extension Color {
-    /// The board's background: a soft pastel yellow, or a dim warm tone in dark mode
-    /// so that light text stays readable.
-    static let pastelYellow: Color = {
-        let light = (red: 0.996, green: 0.949, blue: 0.733)
-        let dark = (red: 0.25, green: 0.23, blue: 0.15)
-        #if canImport(UIKit)
-        return Color(UIColor { traits in
-            let c = traits.userInterfaceStyle == .dark ? dark : light
-            return UIColor(red: c.red, green: c.green, blue: c.blue, alpha: 1)
-        })
-        #elseif canImport(AppKit)
-        return Color(NSColor(name: nil) { appearance in
-            let isDark = appearance.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua
-            let c = isDark ? dark : light
-            return NSColor(srgbRed: c.red, green: c.green, blue: c.blue, alpha: 1)
-        })
-        #else
-        return Color(red: light.red, green: light.green, blue: light.blue)
-        #endif
-    }()
 }
 
 #endif

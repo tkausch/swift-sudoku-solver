@@ -110,7 +110,8 @@ public struct SudokuGenerator: Sendable {
         guard index < Sudoku.gridSize else { return true }
         let row = index / Sudoku.size, col = index % Sudoku.size
 
-        for digit in grid.candidates(atRow: row, col: col).shuffled(using: &rng) {
+        // Sorted first: a Set's order changes between runs, which would break seeded generation.
+        for digit in grid.candidates(atRow: row, col: col).sorted().shuffled(using: &rng) {
             grid[row, col] = digit
             if fillRandom(&grid, from: index + 1, using: &rng) { return true }
         }

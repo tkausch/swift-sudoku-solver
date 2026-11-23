@@ -117,7 +117,8 @@ public struct DFSSolver<Puzzle: SolvableSudoku>: SudokuSolver, Sendable {
 
         for row in 0..<Puzzle.size {
             for col in 0..<Puzzle.size where sudoku.isEmpty(atRow: row, col: col) {
-                let candidates = sudoku.candidates(atRow: row, col: col)
+                // Sorted, so digits are tried in ascending order and runs are reproducible.
+                let candidates = sudoku.candidates(atRow: row, col: col).sorted()
                 if candidates.count <= 1 { return (row, col, candidates) }
                 if best == nil || candidates.count < best!.candidates.count {
                     best = (row, col, candidates)

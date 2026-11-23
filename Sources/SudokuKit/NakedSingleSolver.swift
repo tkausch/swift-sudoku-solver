@@ -58,8 +58,8 @@ public struct NakedSingleSolver<Puzzle: SolvableSudoku>: SudokuSolver, Sendable 
                     foundEmpty = true
                     let candidates = sudoku.candidates(atRow: row, col: col)
                     if candidates.isEmpty { return .contradiction }
-                    if candidates.count == 1 {
-                        sudoku[row, col] = candidates[0]
+                    if candidates.count == 1, let digit = candidates.first {
+                        sudoku[row, col] = digit
                         placed = true
                     }
                 }

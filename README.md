@@ -110,7 +110,7 @@ let easy = SudokuGenerator().generate()             // pass `using: &rng` to mak
 
 | Type | Purpose |
 |---|---|
-| `Sudoku` | 9×9 grid; creation fails for invalid input. `subscript(row:col:)`, `candidates(atRow:col:)`, `hasConflict(atRow:col:)`, `isValidSudoku()`, `isComplete`. |
+| `Sudoku` | 9×9 grid; creation fails for invalid input. `subscript(row:col:)`, `candidates(atRow:col:)`, `hasConflict(atRow:col:)`, `isValidSudoku()`, `isComplete`. Lookup tables `Sudoku.units` (27), `unitsOf[cell]` (3) and `peers[cell]` (20). |
 | `SolvableSudoku` | What a solver needs from a grid. Adopt it to solve other sizes (e.g. 4×4). |
 | `SudokuSolver` | Protocol for solving algorithms: `solve(_:) -> Puzzle?`. |
 | `DFSSolver` | Backtracking solver; also `solveCountingPositions(_:)` and `countSolutions(_:limit:)`. |

@@ -108,7 +108,40 @@ struct SudokuTests {
 
     @Test func emptyGridAllowsEveryDigit() throws {
         let sudoku = try #require(Sudoku(grid: Array(repeating: 0, count: Sudoku.gridSize)))
-        #expect(sudoku.candidates(atRow: 4, col: 4) == Array(1...9))
+        #expect(sudoku.candidates(atRow: 4, col: 4) == Set(1...9))
+    }
+
+    // MARK: - Lookup tables
+
+    @Test func unitsAreRowsColumnsThenBoxes() {
+        #expect(Sudoku.units.count == 27)
+        #expect(Sudoku.units.allSatisfy { $0.count == 9 && Set($0).count == 9 })
+        #expect(Sudoku.units[0] == Array(0..<9))                          // row 0
+        #expect(Sudoku.units[9] == [0, 9, 18, 27, 36, 45, 54, 63, 72])    // column 0
+        #expect(Sudoku.units[18] == [0, 1, 2, 9, 10, 11, 18, 19, 20])     // box 0
+        #expect(Sudoku.units[26] == [60, 61, 62, 69, 70, 71, 78, 79, 80]) // box 8
+    }
+
+    @Test func everyCellIsInThreeUnits() {
+        #expect(Sudoku.unitsOf.count == 81)
+        for cell in 0..<81 {
+            let units = Sudoku.unitsOf[cell]
+            #expect(units.count == 3)
+            #expect(units.allSatisfy { $0.contains(cell) })
+        }
+        // Cell (4, 5) = 41: row 4, column 5, box 4.
+        #expect(Sudoku.unitsOf[41] == [Sudoku.units[4], Sudoku.units[9 + 5], Sudoku.units[18 + 4]])
+    }
+
+    @Test func everyCellHasTwentyPeers() {
+        #expect(Sudoku.peers.count == 81)
+        for cell in 0..<81 {
+            let peers = Sudoku.peers[cell]
+            #expect(peers.count == 20)
+            #expect(!peers.contains(cell))
+            #expect(Set(peers) == Set(Sudoku.unitsOf[cell].joined()).subtracting([cell]))
+        }
+        #expect(Sudoku.peers[0] == [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 18, 19, 20, 27, 36, 45, 54, 63, 72])
     }
 
     // MARK: - hasConflict

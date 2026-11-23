@@ -174,7 +174,7 @@ struct MiniSudoku: SolvableSudoku {
         set { cells[row * 4 + col] = newValue }
     }
 
-    func candidates(atRow row: Int, col: Int) -> [Int] {
+    func candidates(atRow row: Int, col: Int) -> Set<Int> {
         guard self[row, col] == 0 else { return [] }
         let boxRow = row / 2 * 2, boxCol = col / 2 * 2
         var used = Set<Int>()
@@ -183,6 +183,6 @@ struct MiniSudoku: SolvableSudoku {
             used.insert(self[i, col])
             used.insert(self[boxRow + i / 2, boxCol + i % 2])
         }
-        return (1...4).filter { !used.contains($0) }
+        return Set(1...4).subtracting(used)
     }
 }

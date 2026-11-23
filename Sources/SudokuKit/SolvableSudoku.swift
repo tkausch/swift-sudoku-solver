@@ -24,9 +24,9 @@ public protocol SolvableSudoku {
     /// - Parameters:
     ///   - row: The cell's row, `0..<size`.
     ///   - col: The cell's column, `0..<size`.
-    /// - Returns: The possible digits. Empty if the cell is already filled or no
-    ///   digit fits.
-    func candidates(atRow row: Int, col: Int) -> [Int]
+    /// - Returns: The possible digits, in no particular order. Empty if the cell
+    ///   is already filled or no digit fits.
+    func candidates(atRow row: Int, col: Int) -> Set<Int>
 }
 
 extension SolvableSudoku {

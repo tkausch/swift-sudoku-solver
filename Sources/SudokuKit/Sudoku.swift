@@ -10,7 +10,7 @@
 /// let cells = Array(repeating: Sudoku.empty, count: Sudoku.gridSize)
 /// var sudoku = Sudoku(grid: cells)!
 /// sudoku[0, 0] = 5
-/// print(sudoku.candidates(atRow: 0, col: 1))   // [1, 2, 3, 4, 6, 7, 8, 9]
+/// print(sudoku.candidates(atRow: 0, col: 1).sorted())   // [1, 2, 3, 4, 6, 7, 8, 9]
 /// ```
 public struct Sudoku: Equatable, Sendable, CustomStringConvertible {
 
@@ -25,6 +25,38 @@ public struct Sudoku: Equatable, Sendable, CustomStringConvertible {
 
     /// The values a cell may hold: `0` for an empty cell, or a digit `1...size`.
     public static let allowedDigits = 0...size
+
+    // MARK: Lookup tables
+
+    /// Every unit as the ``grid`` indices of its cells: the ``size`` rows first,
+    /// then the columns, then the boxes (27 units of 9 cells).
+    ///
+    /// ```swift
+    /// Sudoku.units[0]    // row 0:    [0, 1, 2, 3, 4, 5, 6, 7, 8]
+    /// Sudoku.units[9]    // column 0: [0, 9, 18, 27, 36, 45, 54, 63, 72]
+    /// Sudoku.units[18]   // box 0:    [0, 1, 2, 9, 10, 11, 18, 19, 20]
+    /// ```
+    public static let units: [[Int]] = {
+        let rows = (0..<size).map { row in (0..<size).map { index(row, $0) } }
+        let columns = (0..<size).map { col in (0..<size).map { index($0, col) } }
+        let boxes = (0..<size).map { box in
+            let top = box / boxSize * boxSize, left = box % boxSize * boxSize
+            return (0..<size).map { i in index(top + i / boxSize, left + i % boxSize) }
+        }
+        return rows + columns + boxes
+    }()
+
+    /// The three units each cell belongs to, by ``grid`` index: its row, column
+    /// and box, in that order, each as the cell indices from ``units``.
+    public static let unitsOf: [[[Int]]] = (0..<gridSize).map { cell in
+        units.filter { $0.contains(cell) }
+    }
+
+    /// The cells that share a row, column or box with each cell, by ``grid``
+    /// index: 20 cells in ascending order, not including the cell itself.
+    public static let peers: [[Int]] = (0..<gridSize).map { cell in
+        Set(unitsOf[cell].joined()).subtracting([cell]).sorted()
+    }
 
     /// Returns whether a digit may be stored in a cell.
     ///
@@ -60,12 +92,7 @@ public struct Sudoku: Equatable, Sendable, CustomStringConvertible {
     ///
     /// - Returns: `true` if no row, column or box contains the same digit twice.
     public func isValidSudoku() -> Bool {
-        let size = Self.size, boxSize = Self.boxSize
-        let boxOrigins = stride(from: 0, to: size, by: boxSize)
-
-        return (0..<size).allSatisfy { isValidRow($0) }
-            && (0..<size).allSatisfy { isValidColumn($0) }
-            && boxOrigins.allSatisfy { i in boxOrigins.allSatisfy { j in isValidBox(r: i, c: j) } }
+        Self.units.allSatisfy { unit in Self.isValidUnit(unit.lazy.map { grid[$0] }) }
     }
 
     /// Reads or writes the cell at a given row and column.
@@ -107,8 +134,7 @@ public struct Sudoku: Equatable, Sendable, CustomStringConvertible {
     public func hasConflict(atRow row: Int, col: Int) -> Bool {
         let digit = self[row, col]
         guard digit != Self.empty else { return false }
-        return [rowUnit(atRow: row), colUnit(atCol: col), boxUnit(atRow: row, col: col)]
-            .contains { unit in unit.lazy.filter { $0 == digit }.count > 1 }
+        return Self.peers[Self.index(row, col)].contains { grid[$0] == digit }
     }
 
     /// The grid as text, one row per line.
@@ -138,40 +164,6 @@ public struct Sudoku: Equatable, Sendable, CustomStringConvertible {
             lines.append(String(line.dropLast()))
         }
         return lines.joined(separator: "\n")
-    }
-    
-    /// Returns `true` if row `i` contains no digit twice.
-    private func isValidRow(_ i: Int) -> Bool {
-        return Self.isValidUnit(rowUnit(atRow: i))
-    }
-    
-    /// Returns `true` if column `j` contains no digit twice.
-    private func isValidColumn(_ j: Int) -> Bool {
-        Self.isValidUnit(colUnit(atCol: j))
-    }
-
-    /// Returns `true` if the box containing cell (`r`, `c`) contains no digit twice.
-    private func isValidBox(r: Int, c: Int) -> Bool {
-        return Self.isValidUnit(boxUnit(atRow: r, col: c))
-    }
-
-    private func boxUnit(atRow r: Int, col c: Int) -> [Int] {
-        let boxSize = Self.boxSize
-        let startRow = (r / boxSize) * boxSize
-        let startCol = (c / boxSize) * boxSize
-        let box = (startRow..<startRow + boxSize).flatMap { row in
-            grid[Self.index(row, startCol)..<Self.index(row, startCol + boxSize)]
-        }
-        return box
-    }
-    
-    private func colUnit(atCol col: Int) -> [Int] {
-        return (0..<Self.size).map { grid[Self.index($0, col)] }
-    }
-    
-    private func rowUnit(atRow row: Int) -> [Int] {
-        let start = Self.index(row,0)
-        return Array(grid[start..<start + Self.size])
     }
     
     /// Returns the position in `grid` of the cell at `row`, `col`.
@@ -208,16 +200,15 @@ extension Sudoku: SolvableSudoku {
     /// - Parameters:
     ///   - row: The cell's row, `0..<size`.
     ///   - col: The cell's column, `0..<size`.
-    /// - Returns: The possible digits in ascending order. Empty if the cell is
-    ///   already filled, or if no digit fits (a dead end).
-    public func candidates(atRow row: Int, col: Int) -> [Int] {
+    /// - Returns: The possible digits. Empty if the cell is already filled, or if
+    ///   no digit fits (a dead end). Sort the set if you need a fixed order.
+    public func candidates(atRow row: Int, col: Int) -> Set<Int> {
         guard isEmpty(atRow: row, col: col) else { return [] }
 
-        let rowNums = rowUnit(atRow: row)
-        let colNums = colUnit(atCol: col)
-        let boxNums = boxUnit(atRow: row, col: col)
-        let used = Set(rowNums + colNums + boxNums)
-
-        return (1...Self.size).filter { !used.contains($0) }
+        var candidates = Set(1...Self.size)
+        for peer in Self.peers[Self.index(row, col)] {
+            candidates.remove(grid[peer])
+        }
+        return candidates
     }
 }
